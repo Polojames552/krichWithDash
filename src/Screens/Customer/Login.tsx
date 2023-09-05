@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, ImageBackground } from "react-native";
-
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [fadeIn] = useState(new Animated.Value(0));
 
   const handleLogin = () => {
-   
+    navigation.navigate("Home");
   };
+
+  const handleSignup= () =>{
+  navigation.navigate("SignUp");
+};
 
   return (
     <ImageBackground
@@ -44,7 +46,7 @@ const LoginScreen = () => {
             <Text style={styles.signupText}>Don't have an account yet?</Text>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#4A78D3" }]}
-              onPress={() => {}}
+              onPress={handleSignup}
             >
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
