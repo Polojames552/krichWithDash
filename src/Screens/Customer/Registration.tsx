@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, ImageBackground, ScrollView } from "react-native";
 
-const LoginScreen = () => {
+const RegistrationScreen= ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [firstname, setFirstname] = useState("");
@@ -11,7 +11,7 @@ const LoginScreen = () => {
   const [number, setNumber] = useState("");
 
   const handleLogin = () => {
-    
+    navigation.navigate("Login");
   };
 
   return (
@@ -99,7 +99,7 @@ const LoginScreen = () => {
             <Text style={styles.signupText}>Already Have an Account?</Text>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: "#4A78D3" }]}
-              onPress={() => {}}
+              onPress={handleLogin}
             >
               <Text style={styles.buttonText}>Log In</Text>
             </TouchableOpacity>
@@ -186,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegistrationScreen;
