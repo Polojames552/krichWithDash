@@ -1,97 +1,62 @@
-import React, {Component, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  Dimensions,
-  TouchableWithoutFeedback,
-  LogBox,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React from "react";
 
-// Icon Set
-import IconAnt from 'react-native-vector-icons/AntDesign';
-import IconMCI from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconFeather from 'react-native-vector-icons/Feather';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import IconIonicons from 'react-native-vector-icons/MaterialCommunityIcons';
+export default function HomeScreen({ navigation }) {
+  const handleImagePress = (productId, image, description) => {
+    navigation.navigate('ProductDetails', { productId, image, description });
+  };
 
-import {useSelector, useDispatch} from 'react-redux';
-
-const {width} = Dimensions.get('window');
-const widthSize = width;
-
-const HomeScreen = ({navigation}) => {
-  const localImageSource = require('../../Assets/Images/splash.png');
-
-    return (
-      <View style={{padding: 20, backgroundColor: 'white', flex: 1}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View />
-
-          <View
-            style={{justifyContent: 'center', alignItems: 'center', left: 5}}>
-            <Text
-              style={{
-                color: '#542E16',
-                fontSize: 18,
-                fontFamily: 'RalewayBlack-8VzB',
-                fontWeight: '900',
-              }}>
-              Krich
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <TouchableOpacity
-              // onPress={() => navigation.navigate('ProductDetails')}
-              style={{marginRight: 10}}>
-              <IconIonicons
-                onPress={() => navigation.navigate('CartDetails')}
-                name="basket-outline"
-                color="black"
-                size={25}
-              />
-              <View
-                style={{
-                  position: 'absolute',
-                  top: -15,
-                  right: -15,
-                  padding: 5,
-                  backgroundColor: 'red',
-                  borderRadius: 20,
-                  height: 25,
-                  width: 25,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-       
+  return (
+    <View style={styles.container}>
+      <View style={styles.row}>
+        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(1, require('../../Assets/Images/round.jpg'), 'Round')}>
+          <Image source={require('../../Assets/Images/round.jpg')} style={styles.image} />
+          <Text style={styles.description}>Round</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(2, require('../../Assets/Images/eightliters.jpeg'), '8 Liters')}>
+          <Image source={require('../../Assets/Images/eightliters.jpeg')} style={styles.image} />
+          <Text style={styles.description}>8 Liters</Text>
+        </TouchableOpacity>
       </View>
-    );
- 
-};
-
-export default HomeScreen;
+      <View style={styles.row}>
+        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(3, require('../../Assets/Images/sixliters.jpg'), '6 Liters')}>
+          <Image source={require('../../Assets/Images/sixliters.jpg')} style={styles.image} />
+          <Text style={styles.description}>6 Liters</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(4, require('../../Assets/Images/slim.jpg'), 'Slim')}>
+          <Image source={require('../../Assets/Images/slim.jpg')} style={styles.image} />
+          <Text style={styles.description}>Slim</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-  ItemContainer: {
-    backgroundColor: 'white',
+  container: {
     flex: 1,
-    height: widthSize / 1.9,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  imageContainer: {
     margin: 5,
-    borderRadius: 10,
-    elevation: 5,
-    marginTop: 40,
+    borderColor: '#70A5CD',
+    borderWidth: 5,
+    alignItems: 'center',
+    borderRadius: 30
   },
-  ItemInvisible: {
-    backgroundColor: 'transparent',
-    elevation: 0,
+  image: {
+    width: 160,
+    height: 160,
+    borderRadius: 30
   },
+  description: {
+    marginTop: 5,
+    fontSize:20,
+    fontWeight:'bold'
+  }
 });
