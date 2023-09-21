@@ -27,7 +27,7 @@ export default function Options() {
   return (
     
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Krich">
+        <Stack.Screen name="KRICH WATER REFILLING STATION">
           {() => (
             <Drawer.Navigator drawerContentOptions={{ activeTintColor: "blue" }}>
               <Drawer.Screen

@@ -3,14 +3,30 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, ImageBac
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const handleLogin = () => {
-    navigation.navigate("Options");
+    if (username === "kimgidoc@gmail.com" && password === "kimgidoc") {
+      navigation.navigate("Options");
+    } else {
+      if (username !== "kimgidoc@gmail.com") {
+        setUsernameError("The username you entered does not exist");
+      } else {
+        setUsernameError("");
+      }
+
+      if (password !== "kimgidoc") {
+        setPasswordError("Incorrect password");
+      } else {
+        setPasswordError("");
+      }
+    }
   };
 
-  const handleSignup= () =>{
-  navigation.navigate("SignUp");
-};
+  const handleSignup = () => {
+    navigation.navigate("SignUp");
+  };
 
   return (
     <ImageBackground
@@ -25,23 +41,30 @@ const LoginScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            onChangeText={(text) => setUsername(text)}
+            onChangeText={(text) => {
+              setUsername(text);
+              setUsernameError(""); // Clear username error on typing
+            }}
             value={username}
           />
+          {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
           <TextInput
             style={styles.input}
             placeholder="Password"
             secureTextEntry
-            onChangeText={(text) => setPassword(text)}
+            onChangeText={(text) => {
+              setPassword(text);
+              setPasswordError(""); // Clear password error on typing
+            }}
             value={password}
           />
+          {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
           <TouchableOpacity
             style={[styles.button, { backgroundColor: "#4A78D3" }]}
             onPress={handleLogin}
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
-
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Don't have an account yet?</Text>
             <TouchableOpacity
@@ -56,7 +79,6 @@ const LoginScreen = ({ navigation }) => {
     </ImageBackground>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -112,6 +134,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
+  },
+  errorText: {
+    color: "red",
+    marginTop: 10,
   },
 });
 

@@ -1,18 +1,69 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, ImageBackground, ScrollView } from "react-native";
+import ImagePicker from 'react-native-image-crop-picker';
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { Image } from "react-native";
 
 const RegistrationScreen= ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [number, setNumber] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
   const handleLogin = () => {
     navigation.navigate("Login");
   };
+  const isButtonDisabled = !(
+    username &&
+    password &&
+    confirmPassword &&
+    firstname &&
+    lastname &&
+    email &&
+    address &&
+    number
+  );
+  const handleImageUpload = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true
+    }).then(image => {
+      setSelectedImage(image.path);
+    }).catch(error => {
+      console.log(error);
+    });
+  };
+
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+
+    if (confirmPassword && text !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handleConfirmPasswordChange = (text) => {
+    setConfirmPassword(text);
+
+    if (password && text !== password) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+
 
   return (
     <ImageBackground
@@ -57,13 +108,17 @@ const RegistrationScreen= ({ navigation }) => {
             value={number}
           />
           <View style={styles.uploadContainer}>
-            <Text style={styles.uploadText}>*Upload Any Valid ID</Text>
+            <Text style={styles.uploadText}>Upload Any Valid ID</Text>
             <TouchableOpacity
               style={styles.uploadIcon}
-              onPress={() => {
-                // Handle opening the gallery here
-              }}
-            ></TouchableOpacity>
+              onPress={handleImageUpload}
+            >
+              {selectedImage ? (
+                <Image source={{ uri: selectedImage }} style={{ width: 50, height: 50 }} />
+              ) : (
+                <FontAwesome5 name="image" size={40} color={'black'} />
+              )}
+            </TouchableOpacity>
           </View>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Login Details</Text>
@@ -75,22 +130,29 @@ const RegistrationScreen= ({ navigation }) => {
             value={username}
           />
           <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-          />
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        onChangeText={handlePasswordChange}
+        value={password}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        secureTextEntry
+        onChangeText={handleConfirmPasswordChange}
+        value={confirmPassword}
+      />
+      {passwordError ? (
+        <Text style={styles.errorText}>{passwordError}</Text>
+      ) : null}
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: "#4A78D3" }]}
+            style={[
+              styles.button,
+              { backgroundColor: isButtonDisabled ? "#ccc" : "#4A78D3" },
+            ]}
             onPress={handleLogin}
+            disabled={isButtonDisabled}
           >
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
@@ -182,7 +244,12 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 2,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 

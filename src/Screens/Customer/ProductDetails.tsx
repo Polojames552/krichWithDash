@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 
 export default function ProductDetails({ route }) {
-  const { productId, image, description } = route.params;
+  const { price, image, description } = route.params;
+
   const [quantity, setQuantity] = useState(1);
 
-  const handleAddToCart = () => {
-    console.log(`Added ${quantity} ${description} to cart`);
-  };
+  const [currentPrice, setCurrentPrice] = useState(price);
 
+  const handleAddToCart = () => {
+    console.log(`Added ${quantity} ${description} to cart with price ₱${currentPrice.toFixed(2)}`);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.productInfo}>
@@ -16,16 +18,28 @@ export default function ProductDetails({ route }) {
           <Image source={image} style={styles.image} />
         </View>
         <Text style={styles.description}>{description}</Text>
-        <Text style={styles.productId}>Product ID: {productId}</Text>
+       <Text style={styles.productId}>Price: ₱{currentPrice.toFixed(2)}</Text>
+
       </View>
       
       <View style={styles.quantityControlContainer}>
         <View style={styles.quantityControl}>
-          <TouchableOpacity onPress={() => setQuantity(quantity - 1)} disabled={quantity <= 1}>
+          <TouchableOpacity 
+            onPress={() => {
+              setQuantity(quantity - 1);
+              setCurrentPrice(currentPrice / 2); // Halve the price
+            }} 
+            disabled={quantity <= 1}
+          >
             <Text style={styles.controlButton}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
+          <TouchableOpacity 
+            onPress={() => {
+              setQuantity(quantity + 1);
+              setCurrentPrice(currentPrice * 2); // Double the price
+            }}
+          >
             <Text style={styles.controlButton}>+</Text>
           </TouchableOpacity>
         </View>
@@ -37,6 +51,8 @@ export default function ProductDetails({ route }) {
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
