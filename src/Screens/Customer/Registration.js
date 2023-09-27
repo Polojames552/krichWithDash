@@ -16,19 +16,19 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Image} from 'react-native';
 
-// const URL = 'https://underdressed-legisl.000webhostapp.com/pictures/';
-// const options = {
-//   title: 'Select Image',
-//   type: 'library',
-//   options: {
-//     maxHeight: 200,
-//     maxWidth: 200,
-//     selectionLimit: 1,
-//     mediaType: 'photo',
-//     includeBase64: false,
-//   },
-// };
-const RegistrationScreen = ({navigation}: any) => {
+const options = {
+title: 'Select Image',
+type: 'library',
+options: {
+  maxHeight: 200,
+  maxWidth: 200,
+  selectionLimit: 1,
+  mediaType: 'photo',
+  includeBase64: false,
+},
+};
+
+const RegistrationScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -41,24 +41,52 @@ const RegistrationScreen = ({navigation}: any) => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
+  const openGallery = async () => {
+    try {
+      const images = await launchImageLibrary(options);
+      if (!images || images.assets.length === 0) {
+        console.log("No image selected.");
+        return;
+      }
+      setSelectedImage(images.assets[0].uri); // Update the selected image state
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
   // const openGallery = async () => {
-  //   const images = await launchImageLibrary(options);
-  //   console.log(images.assets[0]);
-  //   const formdata = new FormData();
-  //   formdata.append('file', {
-  //     uri: images.assets[0],
-  //     type: images.assets[0],
-  //     name: images.assets[0].fileName,
-  //   });
-  //   let res = await fetch(URL, {
-  //     method: 'post',
-  //     body: formdata,
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data; ',
-  //     },
-  //   });
-  //   let responseJson = await res.json();
-  //   console.log(responseJson, 'responseJson');
+  //   try {
+  //     const images = await launchImageLibrary(options);
+  //     if (!images || images.assets.length === 0) {
+  //       console.log("No image selected.");
+  //       return;
+  //     }
+  //     let base_url = "https://underdressed-legisl.000webhostapp.com/uploadimage.php";
+  //     const formdata = new FormData();
+  //     formdata.append('submit', 'ok');
+  //     formdata.append('file', {
+  //       uri: images.assets[0].uri,
+  //       type: images.assets[0].type,
+  //       name: images.assets[0].fileName,
+  //     });
+  
+  //     let res = await fetch(base_url, {
+  //       method: 'post',
+  //       body: formdata,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //         // Add any other headers as needed
+  //       },
+  //     });
+  
+  //     if (!res.ok) {
+  //       throw new Error('Server returned an error');
+  //     }
+  
+  //     let responseJson = await res.json();
+  //     console.log(responseJson, "responseJson");
+  //   } catch (error) {
+  //     console.error("An error occurred:", error);
+  //   }
   // };
 
   const handleLogin = () => {
@@ -83,6 +111,7 @@ const RegistrationScreen = ({navigation}: any) => {
       .then(image => {
         setSelectedImage(image.path);
         console.log(image.path);
+        console.log(image);
       })
       .catch(error => {
         console.log(error);
@@ -130,6 +159,30 @@ const RegistrationScreen = ({navigation}: any) => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       };
+
+      let base_url = "https://underdressed-legisl.000webhostapp.com/uploadimage.php";
+      const formdata = new FormData();
+      formdata.append('submit', 'ok');
+      formdata.append('file', {
+        uri: selectedImage,
+        type: 'image/jpeg', // You may need to set the correct image type here
+        name: 'user_image.jpg', // You can customize the file name
+      });
+      let res = await fetch(base_url, {
+        method: 'post',
+        body: formdata,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          // Add any other headers as needed
+        },
+      });
+          if (!res.ok) {
+        throw new Error('Server returned an error');
+      }
+      let responseJson = await res.json();
+      console.log(responseJson, "responseJson");
+      const newFilename = responseJson.file_name;
+      // console.log('New Filename:', newFilename);
       const Data = {
         Fname: firstname,
         Lname: lastname,
@@ -138,6 +191,7 @@ const RegistrationScreen = ({navigation}: any) => {
         Number: number,
         Username: username,
         Password: password,
+        Picture: newFilename,
       };
       console.log(Data);
       fetch(InsertAPIURL, {
@@ -211,7 +265,7 @@ const RegistrationScreen = ({navigation}: any) => {
           />
           <View style={styles.uploadContainer}>
             <Text style={styles.uploadText}>Upload Any Valid ID</Text>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.uploadIcon}
               onPress={handleImageUpload}>
               {selectedImage ? (
@@ -222,9 +276,21 @@ const RegistrationScreen = ({navigation}: any) => {
               ) : (
                 <FontAwesome5 name="image" size={40} color={'black'} />
               )}
+            </TouchableOpacity> */}
+             <TouchableOpacity
+              style={styles.uploadIcon}
+              onPress={openGallery}>
+              {selectedImage ? (
+                <Image
+                  source={{uri: selectedImage}}
+                  style={{width: 50, height: 50}}
+                />
+              ) : (
+                <FontAwesome5 name="image" size={40} color={'black'} />
+              )}
             </TouchableOpacity>
           </View>
-          {/* <Button title="Upload" onPress={openGallery}></Button> */}
+          {/* <Button title="Submit" onPress={openGallery}></Button> */}
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Login Details</Text>
           </View>
