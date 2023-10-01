@@ -44,17 +44,16 @@ const LoginScreen = ({navigation}: any) => {
         },
         body: `username=${username}&password=${password}`,
       });
-
       const data = await response.json();
-
       if (data.success) {
         Alert.alert('Success', data.message);
-
         // Access user data here
         const userData = data.user;
-        console.log(userData);
-
-        navigation.navigate('Options');
+        // console.log(userData);
+        // const userID = data.user['id']; //Getting UserId
+        // navigation.navigate('Options', userData);
+        console.log('Login Screen:', userData);
+        navigation.navigate('Options', {userData});
       } else {
         Alert.alert('Error', data.message);
       }

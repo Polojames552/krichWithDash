@@ -1,16 +1,68 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React, {useState, useEffect, useMemo} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 
-export default function ProductDetails({ route }) {
-  const { price, image, description } = route.params;
-
+export default function ProductDetails({route}: any) {
+  const {price, image, description, details} = route.params;
   const [quantity, setQuantity] = useState(1);
-
   const [currentPrice, setCurrentPrice] = useState(price);
 
+  useEffect(() => {
+    resetCurrentPrice();
+  }, [price, 1]);
+
+  const resetCurrentPrice = () => {
+    setCurrentPrice(price);
+    setQuantity(1);
+  }; //this function is declared to refresh value of Price and quantity when adding order to cart
+
+  // console.log(route.params);
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} ${description} to cart with price ₱${currentPrice.toFixed(2)}`);
+    const InsertAPIURL =
+      'https://underdressed-legisl.000webhostapp.com/cart.php';
+    const header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+    // console.log('New Filename:', newFilename);
+    const Data = {
+      User_id: details.userData.id,
+      Quantity: quantity,
+      Price: currentPrice,
+      Description: description,
+    };
+    console.log(Data);
+    fetch(InsertAPIURL, {
+      method: 'POST',
+      headers: header,
+      body: JSON.stringify(Data),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(response => {
+        Alert.alert('Attention', response[0].Message);
+        resetCurrentPrice();
+      })
+      .catch(error => {
+        Alert.alert('Attention', `Network error: ${error.message}`);
+      });
+    console.log(
+      `Added ${quantity} ${description} to cart with price ₱${currentPrice.toFixed(
+        2,
+      )}`,
+    );
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.productInfo}>
@@ -18,41 +70,41 @@ export default function ProductDetails({ route }) {
           <Image source={image} style={styles.image} />
         </View>
         <Text style={styles.description}>{description}</Text>
-       <Text style={styles.productId}>Price: ₱{currentPrice.toFixed(2)}</Text>
-
+        <Text style={styles.description}>Price: ₱{price.toFixed(2)}</Text>
+        <Text style={styles.productId}>Total: ₱{currentPrice.toFixed(2)}</Text>
       </View>
-      
+
       <View style={styles.quantityControlContainer}>
         <View style={styles.quantityControl}>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => {
               setQuantity(quantity - 1);
-              setCurrentPrice(currentPrice / 2); // Halve the price
-            }} 
-            disabled={quantity <= 1}
-          >
+              const totalPrice = currentPrice - price;
+              setCurrentPrice(totalPrice); // Halve the price
+            }}
+            disabled={quantity <= 1}>
             <Text style={styles.controlButton}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => {
               setQuantity(quantity + 1);
-              setCurrentPrice(currentPrice * 2); // Double the price
-            }}
-          >
+              const totalPrice = currentPrice + price;
+              setCurrentPrice(totalPrice); // Double the price
+            }}>
             <Text style={styles.controlButton}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
+      <TouchableOpacity
+        style={styles.addToCartButton}
+        onPress={handleAddToCart}>
         <Text style={styles.addToCartButtonText}>Add to Cart</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -64,9 +116,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageContainer: {
-    borderWidth: 10, 
-    borderColor: '#70A5CD', 
-    borderRadius: 15, 
+    borderWidth: 10,
+    borderColor: '#70A5CD',
+    borderRadius: 15,
   },
   image: {
     width: 200,

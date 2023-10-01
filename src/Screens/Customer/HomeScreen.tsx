@@ -1,23 +1,49 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React from 'react';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 
-export default function HomeScreen({ navigation }) {
-  const handleImagePress = (price, image, description) => {
-    navigation.navigate('ProductDetails', { price, image, description });
+export default function HomeScreen({navigation, route}: any) {
+  // const {details} = route.params;
+  const details = route.params?.details || null;
+  // const details = navigation.getParam('');
+  const handleImagePress = (price: any, image: any, description: any) => {
+    navigation.navigate('ProductDetails', {details, price, image, description});
   };
+  console.log('Home Screen:', details.userData.id); //Out put id of user who logged in
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-      <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(10.00, require('../../Assets/Images/round.jpg'), 'Round')}>
-          <Image source={require('../../Assets/Images/round.jpg')} style={styles.image} />
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={() =>
+            handleImagePress(
+              10,
+              require('../../Assets/Images/round.jpg'),
+              'Round',
+            )
+          }>
+          <Image
+            source={require('../../Assets/Images/round.jpg')}
+            style={styles.image}
+          />
           <View style={styles.textContainer}>
             <Text style={styles.description}>Round</Text>
             <Text style={styles.price}>Php 10.00</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(15.00, require('../../Assets/Images/eightliters.jpeg'), '8 Liters')}>
-          <Image source={require('../../Assets/Images/eightliters.jpeg')} style={styles.image} />
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={() =>
+            handleImagePress(
+              15,
+              require('../../Assets/Images/eightliters.jpeg'),
+              '8 Liters',
+            )
+          }>
+          <Image
+            source={require('../../Assets/Images/eightliters.jpeg')}
+            style={styles.image}
+          />
           <View style={styles.textContainer}>
             <Text style={styles.description}>8 Liters</Text>
             <Text style={styles.price}>Php 15.00</Text>
@@ -25,15 +51,37 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
-        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(12.00, require('../../Assets/Images/sixliters.jpg'), '6 Liters')}>
-          <Image source={require('../../Assets/Images/sixliters.jpg')} style={styles.image} />
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={() =>
+            handleImagePress(
+              12,
+              require('../../Assets/Images/sixliters.jpg'),
+              '6 Liters',
+            )
+          }>
+          <Image
+            source={require('../../Assets/Images/sixliters.jpg')}
+            style={styles.image}
+          />
           <View style={styles.textContainer}>
             <Text style={styles.description}>6 Liters</Text>
             <Text style={styles.price}>Php 12.00</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.imageContainer} onPress={() => handleImagePress(18.00, require('../../Assets/Images/slim.jpg'), 'Slim')}>
-          <Image source={require('../../Assets/Images/slim.jpg')} style={styles.image} />
+        <TouchableOpacity
+          style={styles.imageContainer}
+          onPress={() =>
+            handleImagePress(
+              18,
+              require('../../Assets/Images/slim.jpg'),
+              'Slim',
+            )
+          }>
+          <Image
+            source={require('../../Assets/Images/slim.jpg')}
+            style={styles.image}
+          />
           <View style={styles.textContainer}>
             <Text style={styles.description}>Slim</Text>
             <Text style={styles.price}>Php 18.00</Text>
@@ -61,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: 'white',
     padding: 10,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -90,5 +138,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: 'green', // Adjust the color if needed
-  }
+  },
 });

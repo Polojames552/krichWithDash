@@ -1,5 +1,12 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const productsData = [
@@ -20,13 +27,15 @@ const productsData = [
   // Add more products as needed
 ];
 
-export default function MyCart({ navigation }) {
-  const handleProductPress = (productId, image, title) => {
-    navigation.navigate('ProductDetails', { productId, image, title });
+export default function MyCart({navigation}: any) {
+  const handleProductPress = (productId: any, image: any, title: any) => {
+    navigation.navigate('ProductDetails', {productId, image, title});
   };
 
-  const renderProductItem = ({ item }) => (
-    <TouchableOpacity style={styles.productItem} onPress={() => handleProductPress(item.id, item.image, item.title)}>
+  const renderProductItem = ({item}: any) => (
+    <TouchableOpacity
+      style={styles.productItem}
+      onPress={() => handleProductPress(item.id, item.image, item.title)}>
       <Image source={item.image} style={styles.productImage} />
       <View style={styles.productInfo}>
         <View>

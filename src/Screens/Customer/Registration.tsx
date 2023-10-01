@@ -17,15 +17,15 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Image} from 'react-native';
 
 const options = {
-title: 'Select Image',
-type: 'library',
-options: {
-  maxHeight: 200,
-  maxWidth: 200,
-  selectionLimit: 1,
-  mediaType: 'photo',
-  includeBase64: false,
-},
+  title: 'Select Image',
+  type: 'library',
+  options: {
+    maxHeight: 200,
+    maxWidth: 200,
+    selectionLimit: 1,
+    mediaType: 'photo',
+    includeBase64: false,
+  },
 };
 
 const RegistrationScreen = ({navigation}) => {
@@ -44,50 +44,19 @@ const RegistrationScreen = ({navigation}) => {
   const openGallery = async () => {
     try {
       const images = await launchImageLibrary(options);
-      if (!images || images.assets.length === 0) {
-        console.log("No image selected.");
-        return;
+      if (images && images.assets) {
+        if (images.assets.length === 0) {
+          console.log('No image selected.');
+        } else {
+          setSelectedImage(images.assets[0].uri); // Update the selected image state
+        }
+      } else {
+        console.log('Image selection canceled by the user.');
       }
-      setSelectedImage(images.assets[0].uri); // Update the selected image state
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error('An error occurred:', error);
     }
   };
-  // const openGallery = async () => {
-  //   try {
-  //     const images = await launchImageLibrary(options);
-  //     if (!images || images.assets.length === 0) {
-  //       console.log("No image selected.");
-  //       return;
-  //     }
-  //     let base_url = "https://underdressed-legisl.000webhostapp.com/uploadimage.php";
-  //     const formdata = new FormData();
-  //     formdata.append('submit', 'ok');
-  //     formdata.append('file', {
-  //       uri: images.assets[0].uri,
-  //       type: images.assets[0].type,
-  //       name: images.assets[0].fileName,
-  //     });
-  
-  //     let res = await fetch(base_url, {
-  //       method: 'post',
-  //       body: formdata,
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //         // Add any other headers as needed
-  //       },
-  //     });
-  
-  //     if (!res.ok) {
-  //       throw new Error('Server returned an error');
-  //     }
-  
-  //     let responseJson = await res.json();
-  //     console.log(responseJson, "responseJson");
-  //   } catch (error) {
-  //     console.error("An error occurred:", error);
-  //   }
-  // };
 
   const handleLogin = () => {
     navigation.navigate('Login');
@@ -154,13 +123,15 @@ const RegistrationScreen = ({navigation}) => {
       // alert("successful");
       // const baseUrl = "http://krichwater.infinityfreeapp.com/";
       // const InsertAPIURL = baseUrl+"query/RegisterUser.php";
-      const InsertAPIURL = 'https://underdressed-legisl.000webhostapp.com/';
+      const InsertAPIURL =
+        'https://underdressed-legisl.000webhostapp.com/register.php';
       const header = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       };
 
-      let base_url = "https://underdressed-legisl.000webhostapp.com/uploadimage.php";
+      let base_url =
+        'https://underdressed-legisl.000webhostapp.com/uploadimage.php';
       const formdata = new FormData();
       formdata.append('submit', 'ok');
       formdata.append('file', {
@@ -176,11 +147,11 @@ const RegistrationScreen = ({navigation}) => {
           // Add any other headers as needed
         },
       });
-          if (!res.ok) {
+      if (!res.ok) {
         throw new Error('Server returned an error');
       }
       let responseJson = await res.json();
-      console.log(responseJson, "responseJson");
+      console.log(responseJson, 'responseJson');
       const newFilename = responseJson.file_name;
       // console.log('New Filename:', newFilename);
       const Data = {
@@ -277,9 +248,7 @@ const RegistrationScreen = ({navigation}) => {
                 <FontAwesome5 name="image" size={40} color={'black'} />
               )}
             </TouchableOpacity> */}
-             <TouchableOpacity
-              style={styles.uploadIcon}
-              onPress={openGallery}>
+            <TouchableOpacity style={styles.uploadIcon} onPress={openGallery}>
               {selectedImage ? (
                 <Image
                   source={{uri: selectedImage}}
