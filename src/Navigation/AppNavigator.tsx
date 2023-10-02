@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from '../Screens/Customer/Login';
@@ -6,10 +6,13 @@ import Splash from '../Screens/Customer/Splash';
 import Registration from '../Screens/Customer/Registration';
 import HomeScreen from '../Screens/Customer/HomeScreen';
 import Options from './Options';
+// import {useRoute} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
-const AppNavigator = () => {
+const AppNavigator = route => {
+  const details = route.params || null;
+  console.log('AppNavigator:', details);
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
