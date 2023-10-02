@@ -1,12 +1,5 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const productsData = [
@@ -16,6 +9,7 @@ const productsData = [
     title: 'Received Product 1',
     price: '$10.99',
     quantity: 1,
+    selected: false,
   },
   {
     id: 2,
@@ -23,45 +17,73 @@ const productsData = [
     title: 'Received Product 2',
     price: '$15.99',
     quantity: 2,
+    selected: false,
   },
   // Add more products as needed
 ];
 
-export default function MyCart({navigation}: any) {
-  const handleProductPress = (productId: any, image: any, title: any) => {
-    navigation.navigate('ProductDetails', {productId, image, title});
+export default function MyCart({ navigation }) {
+  const [products, setProducts] = useState(productsData);
+  const [selectAll, setSelectAll] = useState(false);
+
+  const handleProductPress = (productId, image, title) => {
+    navigation.navigate('ProductDetails', { productId, image, title });
   };
 
-  const renderProductItem = ({item}: any) => (
-    <TouchableOpacity
-      style={styles.productItem}
-      onPress={() => handleProductPress(item.id, item.image, item.title)}>
+  const toggleSelect = (productId) => {
+    setProducts(prevProducts => 
+      prevProducts.map(product => 
+        product.id === productId ? {...product, selected: !product.selected} : product
+      )
+    );
+  };
+
+  const toggleSelectAll = () => {
+    setSelectAll(prev => !prev);
+    setProducts(prevProducts => 
+      prevProducts.map(product => ({...product, selected: !selectAll}))
+    );
+  };
+
+  const renderProductItem = ({ item }) => (
+    <TouchableOpacity style={styles.productItem} onPress={() => handleProductPress(item.id, item.image, item.title)}>
+      <TouchableOpacity onPress={() => toggleSelect(item.id)}>
+        <Icon name={item.selected ? "check-square-o" : "square-o"} size={25} color="black" />
+      </TouchableOpacity>
       <Image source={item.image} style={styles.productImage} />
       <View style={styles.productInfo}>
         <View>
           <Text style={styles.productTitle}>{item.title}</Text>
           <Text style={styles.productPrice}>{item.price}</Text>
         </View>
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity style={styles.quantityButton}>
-            <Icon name="minus" size={16} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.quantityText}>{item.quantity}</Text>
-          <TouchableOpacity style={styles.quantityButton}>
-            <Icon name="plus" size={16} color="black" />
-          </TouchableOpacity>
-        </View>
       </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => alert("Delete button pressed!")}>
+        <Icon name="trash" size={25} color="black" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
+
+  const handleCheckout = () => {
+    const selectedProducts = products.filter(product => product.selected);
+    // Implement your checkout logic with selected products
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={productsData}
+        data={products}
         renderItem={renderProductItem}
         keyExtractor={item => item.id.toString()}
       />
+      <TouchableOpacity style={styles.selectAllContainer} onPress={toggleSelectAll}>
+        <View style={styles.checkboxContainer}>
+          <Icon name={selectAll ? "check-square-o" : "square-o"} size={25} color="black" />
+          <Text style={styles.selectAllText}>Select all</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
+        <Text style={styles.checkoutText}>Checkout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -101,18 +123,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'green',
   },
-  quantityContainer: {
+  deleteButton: {
+    marginLeft: 'auto',
+  },
+  selectAllContainer: {
+    position: 'absolute',
+    bottom: 80,
+    left: 10,
+  },
+  checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  quantityButton: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginHorizontal: 5,
-  },
-  quantityText: {
+  selectAllText: {
+    marginLeft: 10,
     fontSize: 16,
+  },
+  checkoutButton: {
+    backgroundColor: 'blue',
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+  },
+  checkoutText: {
+    color: 'white',
+    fontSize: 18,
   },
 });

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 export default function ProductDetails({route}: any) {
-  const {price, image, description, details} = route.params;
+  const { price, image, description, details } = route.params || {};
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(price);
 
@@ -18,7 +18,7 @@ export default function ProductDetails({route}: any) {
   }, [price, 1]);
 
   const resetCurrentPrice = () => {
-    setCurrentPrice(price);
+    setCurrentPrice(price || 0); // Default to 0 if price is undefined
     setQuantity(1);
   }; //this function is declared to refresh value of Price and quantity when adding order to cart
 
@@ -65,6 +65,8 @@ export default function ProductDetails({route}: any) {
 
   return (
     <View style={styles.container}>
+        {price && description && quantity ? (
+        <View>
       <View style={styles.productInfo}>
         <View style={styles.imageContainer}>
           <Image source={image} style={styles.image} />
@@ -103,6 +105,10 @@ export default function ProductDetails({route}: any) {
         <Text style={styles.addToCartButtonText}>Add to Cart</Text>
       </TouchableOpacity>
     </View>
+    ) : (
+      <Text style={styles.errorMessage}>Select a product first</Text>
+    )}
+  </View>
   );
 }
 
@@ -166,5 +172,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorMessage: {
+    fontSize: 20,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 50,
   },
 });

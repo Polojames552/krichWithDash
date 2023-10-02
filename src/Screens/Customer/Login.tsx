@@ -105,16 +105,17 @@ const LoginScreen = ({navigation}: any) => {
             onPress={handleLogin}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
-          <View style={styles.signupContainer}>
+         
             <Text style={styles.signupText}>Don't have an account yet?</Text>
             <TouchableOpacity
-              style={[styles.button, {backgroundColor: '#4A78D3'}]}
-              onPress={handleSignup}>
+              style={[styles.button, styles.signupButton]} // This line is updated
+              onPress={handleSignup}
+            >
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      
     </ImageBackground>
   );
 };
@@ -177,6 +178,9 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
+  },
+  signupButton: {
+    backgroundColor: "#4A78D3",
   },
 });
 
