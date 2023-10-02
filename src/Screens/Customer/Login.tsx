@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,33 +8,43 @@ import {
   Animated,
   ImageBackground,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
-const API_URL = 'https://underdressed-legisl.000webhostapp.com/auth.php';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const API_URL = 'https://underdressed-legisl.000webhostapp.com/auth.php';
 const LoginScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState('false');
+  useEffect(() => {
+    // Check if the user is already authenticated
+    checkAuthentication();
+    checkLogin();
+  }, []);
 
-  // const handleLogin = () => {
-  //   if (username === 'kimgidoc@gmail.com' && password === 'kimgidoc') {
-  //     navigation.navigate('Options');
-  //   } else {
-  //     if (username !== 'kimgidoc@gmail.com') {
-  //       setUsernameError('The username you entered does not exist');
-  //     } else {
-  //       setUsernameError('');
-  //     }
+  const checkAuthentication = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const userData = await AsyncStorage.getItem('user');
+      if (token) {
+        // User is authenticated, navigate to Options screen
+        navigation.replace('Options', {userData});
+      }
+    } catch (error) {
+      console.error('Error checking authentication:', error);
+    }
+  };
+  const checkLogin = async () => {
+    const isLoggedIn = await AsyncStorage.getItem('login');
+    if (isLoggedIn === 'true') {
+      setIsLoggedIn('true');
+    }
+  };
 
-  //     if (password !== 'kimgidoc') {
-  //       setPasswordError('Incorrect password');
-  //     } else {
-  //       setPasswordError('');
-  //     }
-  //   }
-  // };
   const handleLogin = async () => {
     try {
       const response = await fetch(API_URL, {
@@ -47,75 +57,79 @@ const LoginScreen = ({navigation}: any) => {
       const data = await response.json();
       if (data.success) {
         Alert.alert('Success', data.message);
-        // Access user data here
-        const userData = data.user;
-        // console.log(userData);
-        // const userID = data.user['id']; //Getting UserId
-        // navigation.navigate('Options', userData);
+        const {token, user} = data;
+        await AsyncStorage.setItem('authToken', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        await AsyncStorage.setItem('login', 'true');
+        // navigation.replace('Options', {userData}); // Use replace instead of navigate
+        const userData = await AsyncStorage.getItem('user');
         console.log('Login Screen:', userData);
-        navigation.navigate('Options', {userData});
+        navigation.replace('Options', {userData}); // Use replace instead of navigate
       } else {
         Alert.alert('Error', data.message);
+        setPassword('');
       }
     } catch (error) {
       console.error('Error:', error);
       Alert.alert('Error', 'An error occurred');
     }
   };
+
   const handleSignup = () => {
     navigation.navigate('SignUp');
   };
-
   return (
     <ImageBackground
       source={require('../../Assets/Images/bg_main.png')}
       style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <View style={styles.loginContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Login</Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            onChangeText={text => {
-              setUsername(text);
-              setUsernameError(''); // Clear username error on typing
-            }}
-            value={username}
-          />
-          {usernameError ? (
-            <Text style={styles.errorText}>{usernameError}</Text>
-          ) : null}
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            onChangeText={text => {
-              setPassword(text);
-              setPasswordError(''); // Clear password error on typing
-            }}
-            value={password}
-          />
-          {passwordError ? (
-            <Text style={styles.errorText}>{passwordError}</Text>
-          ) : null}
-          <TouchableOpacity
-            style={[styles.button, {backgroundColor: '#4A78D3'}]}
-            onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-         
+      {isLoggedIn === 'false' ? (
+        <View style={styles.container}>
+          <View style={styles.loginContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Login</Text>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              onChangeText={text => {
+                setUsername(text);
+                setUsernameError(''); // Clear username error on typing
+              }}
+              value={username}
+            />
+            {usernameError ? (
+              <Text style={styles.errorText}>{usernameError}</Text>
+            ) : null}
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry
+              onChangeText={text => {
+                setPassword(text);
+                setPasswordError(''); // Clear password error on typing
+              }}
+              value={password}
+            />
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
+            <TouchableOpacity
+              style={[styles.button, {backgroundColor: '#4A78D3'}]}
+              onPress={handleLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
             <Text style={styles.signupText}>Don't have an account yet?</Text>
             <TouchableOpacity
               style={[styles.button, styles.signupButton]} // This line is updated
-              onPress={handleSignup}
-            >
+              onPress={handleSignup}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
         </View>
-      
+      ) : (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
     </ImageBackground>
   );
 };
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   signupButton: {
-    backgroundColor: "#4A78D3",
+    backgroundColor: '#4A78D3',
   },
 });
 

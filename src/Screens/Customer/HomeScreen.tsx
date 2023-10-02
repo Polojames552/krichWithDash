@@ -8,7 +8,7 @@ export default function HomeScreen({navigation, route}: any) {
   const handleImagePress = (price: any, image: any, description: any) => {
     navigation.navigate('ProductDetails', {details, price, image, description});
   };
-  console.log('Home Screen:', details.userData.id); //Out put id of user who logged in
+  console.log('Home Screen:', details.userData); //Out put id of user who logged in
 
   return (
     <View style={styles.container}>
