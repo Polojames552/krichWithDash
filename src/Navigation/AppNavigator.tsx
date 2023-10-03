@@ -6,6 +6,7 @@ import Splash from '../Screens/Customer/Splash';
 import Registration from '../Screens/Customer/Registration';
 import HomeScreen from '../Screens/Customer/HomeScreen';
 import Options from './Options';
+import AdminOptions from './AdminOptions';
 // import {useRoute} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -38,6 +39,11 @@ const AppNavigator = route => {
       <Stack.Screen
         name="Options"
         component={Options}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AdminOptions"
+        component={AdminOptions}
         options={{headerShown: false}}
       />
       {/* Add more screens here as needed */}
