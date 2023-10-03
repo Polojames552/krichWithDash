@@ -29,15 +29,25 @@ const LoginScreen = ({navigation}: any) => {
   const checkAuthentication = async () => {
     try {
       const token = await AsyncStorage.getItem('authToken');
-      const userData = await AsyncStorage.getItem('user');
+      const userDataString = await AsyncStorage.getItem('user');
+  
       if (token) {
-        // User is authenticated, navigate to Options screen
-        navigation.replace('Options', {userData});
+        const userData = JSON.parse(userDataString); // Parse user object
+        const role = userData.Role;
+  
+        if (role === 'Admin') {
+          navigation.replace('AdminOptions', {userData});
+        } else if (role === 'User') {
+          navigation.replace('Options', {userData});
+        } else {
+          // Handle other roles if needed
+        }
       }
     } catch (error) {
       console.error('Error checking authentication:', error);
     }
   };
+  
   const checkLogin = async () => {
     const isLoggedIn = await AsyncStorage.getItem('login');
     if (isLoggedIn === 'true') {
@@ -61,10 +71,20 @@ const LoginScreen = ({navigation}: any) => {
         await AsyncStorage.setItem('authToken', token);
         await AsyncStorage.setItem('user', JSON.stringify(user));
         await AsyncStorage.setItem('login', 'true');
-        // navigation.replace('Options', {userData}); // Use replace instead of navigate
-        const userData = await AsyncStorage.getItem('user');
-        console.log('Login Screen:', userData);
-        navigation.replace('Options', {userData}); // Use replace instead of navigate
+  
+        const userData = JSON.parse(JSON.stringify(user)); // Parse user object
+  
+        // Extract Role
+        const role = userData.Role;
+  
+        if (role === 'Admin') {
+          navigation.replace('AdminOptions', {userData});
+        } else if (role === 'User') {
+          navigation.replace('Options', {userData});
+        } else {
+          // Handle other roles if needed
+        }
+  
       } else {
         Alert.alert('Error', data.message);
         setPassword('');
@@ -74,7 +94,6 @@ const LoginScreen = ({navigation}: any) => {
       Alert.alert('Error', 'An error occurred');
     }
   };
-
   const handleSignup = () => {
     navigation.navigate('SignUp');
   };
