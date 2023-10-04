@@ -40,7 +40,7 @@ function CustomDrawerContent({navigation}) {
         )}
         onPress={() => navigation.navigate('Products')}
       />
-     
+
       {navigation.isFocused() && (
         <View style={{marginTop: '108%'}}>
           <TouchableOpacity
@@ -89,7 +89,6 @@ export default function AdminOptions({navigation}) {
               initialParams={{details}}
             />
             <Drawer.Screen name="Products" component={Products} />
-           
           </Drawer.Navigator>
         )}
       </Stack.Screen>

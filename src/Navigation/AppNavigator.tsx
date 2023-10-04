@@ -7,13 +7,12 @@ import Registration from '../Screens/Customer/Registration';
 import HomeScreen from '../Screens/Customer/HomeScreen';
 import Options from './Options';
 import AdminOptions from './AdminOptions';
-// import {useRoute} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = route => {
-  const details = route.params || null;
-  console.log('AppNavigator:', details);
+  // const details = route.params || null;
+  // console.log('AppNavigator:', route);
   return (
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen

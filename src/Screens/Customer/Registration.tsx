@@ -124,14 +124,14 @@ const RegistrationScreen = ({navigation}) => {
       // const baseUrl = "http://krichwater.infinityfreeapp.com/";
       // const InsertAPIURL = baseUrl+"query/RegisterUser.php";
       const InsertAPIURL =
-        'https://underdressed-legisl.000webhostapp.com/register.php';
+        'https://underdressed-legisl.000webhostapp.com/Authentication/Register.php';
       const header = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       };
 
       let base_url =
-        'https://underdressed-legisl.000webhostapp.com/uploadimage.php';
+        'https://underdressed-legisl.000webhostapp.com/ImageUploader/RegisterUploadImage.php';
       const formdata = new FormData();
       formdata.append('submit', 'ok');
       formdata.append('file', {

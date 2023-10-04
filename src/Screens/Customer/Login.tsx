@@ -13,7 +13,8 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://underdressed-legisl.000webhostapp.com/auth.php';
+const API_URL =
+  'https://underdressed-legisl.000webhostapp.com/Authentication/Login.php';
 const LoginScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

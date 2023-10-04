@@ -1,92 +1,89 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
 
 export default function HomeScreen({navigation, route}: any) {
-  // const {details} = route.params;
   const details = route.params?.details || null;
-  // const details = navigation.getParam('');
-  const handleImagePress = (price: any, image: any, description: any) => {
-    navigation.navigate('ProductDetails', {details, price, image, description});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  console.log('H:Route-From: ', route);
+  useEffect(() => {
+    fetchData();
+  }, []);
+  // }, [data]);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        'https://underdressed-legisl.000webhostapp.com/Display/DisplayHomeWater.php',
+      );
+      const result = await response.json();
+      if (result.success) {
+        setData(result.data);
+      } else {
+        console.error('Data fetch failed:', result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleImagePress = (price, image, description, productId) => {
+    navigation.navigate('ProductDetails', {
+      path: 'Home',
+      details,
+      price,
+      image,
+      description,
+      productId,
+    });
   };
   console.log('Home Screen:', details.userData); //Out put id of user who logged in
+  console.log('Products-ID:', data);
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.imageContainer}
-          onPress={() =>
-            handleImagePress(
-              10,
-              require('../../Assets/Images/round.jpg'),
-              'Round',
-            )
-          }>
-          <Image
-            source={require('../../Assets/Images/round.jpg')}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.description}>Round</Text>
-            <Text style={styles.price}>Php 10.00</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.imageContainer}
-          onPress={() =>
-            handleImagePress(
-              15,
-              require('../../Assets/Images/eightliters.jpeg'),
-              '8 Liters',
-            )
-          }>
-          <Image
-            source={require('../../Assets/Images/eightliters.jpeg')}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.description}>8 Liters</Text>
-            <Text style={styles.price}>Php 15.00</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.row}>
-        <TouchableOpacity
-          style={styles.imageContainer}
-          onPress={() =>
-            handleImagePress(
-              12,
-              require('../../Assets/Images/sixliters.jpg'),
-              '6 Liters',
-            )
-          }>
-          <Image
-            source={require('../../Assets/Images/sixliters.jpg')}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.description}>6 Liters</Text>
-            <Text style={styles.price}>Php 12.00</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.imageContainer}
-          onPress={() =>
-            handleImagePress(
-              18,
-              require('../../Assets/Images/slim.jpg'),
-              'Slim',
-            )
-          }>
-          <Image
-            source={require('../../Assets/Images/slim.jpg')}
-            style={styles.image}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.description}>Slim</Text>
-            <Text style={styles.price}>Php 18.00</Text>
-          </View>
-        </TouchableOpacity>
+        <FlatList
+          data={data}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.imageContainer}
+              onPress={() =>
+                handleImagePress(
+                  item.Price,
+
+                  item.Image,
+
+                  'Round',
+                  item.id,
+                )
+              }>
+              <Image
+                source={{
+                  uri:
+                    'https://underdressed-legisl.000webhostapp.com/products/' +
+                    item.Image,
+                }}
+                style={styles.image}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.description}>{item.Name}</Text>
+                <Text style={styles.price}>
+                  Php {parseInt(item.Price).toFixed(2)}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
       </View>
     </View>
   );
