@@ -9,33 +9,41 @@ import {
 } from 'react-native';
 
 export default function ProductDetails({route}: any) {
-  const { price, image, description, details } = route.params || {};
+  const {price, image, description, productId, details, path} =
+    route.params || {};
+  const item_price = price;
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(price);
+  const userData = JSON.parse(details.userData);
 
+  console.log('PD:Route-From: ', path);
+  // ProductDetails-qi8Dy0R0tz1TWOOVFsAoJ
   useEffect(() => {
     resetCurrentPrice();
   }, [price, 1]);
 
   const resetCurrentPrice = () => {
-    setCurrentPrice(price || 0); // Default to 0 if price is undefined
+    setCurrentPrice(price || 0);
     setQuantity(1);
   }; //this function is declared to refresh value of Price and quantity when adding order to cart
 
   // console.log(route.params);
   const handleAddToCart = () => {
     const InsertAPIURL =
-      'https://underdressed-legisl.000webhostapp.com/cart.php';
+      'https://underdressed-legisl.000webhostapp.com/Add/AddToCartWater.php';
     const header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
     // console.log('New Filename:', newFilename);
     const Data = {
-      User_id: details.userData.id,
+      User_id: userData.id,
+      Product_id: productId,
       Quantity: quantity,
-      Price: currentPrice,
+      Price: item_price,
+      Total_Price: currentPrice,
       Description: description,
+      Image: image,
     };
     console.log(Data);
     fetch(InsertAPIURL, {
@@ -54,61 +62,83 @@ export default function ProductDetails({route}: any) {
         resetCurrentPrice();
       })
       .catch(error => {
+        console.error('Error fetching data:', error.message);
+        console.log('Response status:', error.response.status);
+        console.log('Response text:', error.response.text());
         Alert.alert('Attention', `Network error: ${error.message}`);
       });
     console.log(
-      `Added ${quantity} ${description} to cart with price ₱${currentPrice.toFixed(
-        2,
-      )}`,
+      `Added ${quantity} ${description} to cart with price ₱${parseInt(
+        currentPrice,
+      ).toFixed(2)}`,
     );
   };
-
+  const handleEditCart = () => {};
   return (
     <View style={styles.container}>
-        {price && description && quantity ? (
+      {price && description && quantity ? (
         <View>
-      <View style={styles.productInfo}>
-        <View style={styles.imageContainer}>
-          <Image source={image} style={styles.image} />
-        </View>
-        <Text style={styles.description}>{description}</Text>
-        <Text style={styles.description}>Price: ₱{price.toFixed(2)}</Text>
-        <Text style={styles.productId}>Total: ₱{currentPrice.toFixed(2)}</Text>
-      </View>
+          <View style={styles.productInfo}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri:
+                    'https://underdressed-legisl.000webhostapp.com/products/' +
+                    image,
+                }}
+                style={styles.image}
+              />
+            </View>
+            <Text style={styles.description}>{description}</Text>
+            <Text style={styles.description}>
+              Price: ₱{parseInt(price).toFixed(2)}
+            </Text>
+            <Text style={styles.productId}>
+              Total: ₱{parseInt(currentPrice).toFixed(2)}
+            </Text>
+          </View>
 
-      <View style={styles.quantityControlContainer}>
-        <View style={styles.quantityControl}>
-          <TouchableOpacity
-            onPress={() => {
-              setQuantity(quantity - 1);
-              const totalPrice = currentPrice - price;
-              setCurrentPrice(totalPrice); // Halve the price
-            }}
-            disabled={quantity <= 1}>
-            <Text style={styles.controlButton}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setQuantity(quantity + 1);
-              const totalPrice = currentPrice + price;
-              setCurrentPrice(totalPrice); // Double the price
-            }}>
-            <Text style={styles.controlButton}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          <View style={styles.quantityControlContainer}>
+            <View style={styles.quantityControl}>
+              <TouchableOpacity
+                onPress={() => {
+                  setQuantity(quantity - 1);
+                  const totalPrice = parseInt(currentPrice) - parseInt(price);
+                  setCurrentPrice(totalPrice); // Halve the price
+                }}
+                disabled={quantity <= 1}>
+                <Text style={styles.controlButton}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.quantity}>{quantity}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setQuantity(quantity + 1);
+                  const totalPrice = parseInt(currentPrice) + parseInt(price);
+                  setCurrentPrice(totalPrice); // Double the price
+                }}>
+                <Text style={styles.controlButton}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <TouchableOpacity
-        style={styles.addToCartButton}
-        onPress={handleAddToCart}>
-        <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-      </TouchableOpacity>
+          {path === 'Home' ? (
+            <TouchableOpacity
+              style={styles.addToCartButton}
+              onPress={handleAddToCart}>
+              <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{...styles.addToCartButton , backgroundColor: '#FF0000'}}
+              onPress={handleEditCart}>
+              <Text style={styles.addToCartButtonText}>Edit to Cart</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ) : (
+        <Text style={styles.errorMessage}>Select a product first</Text>
+      )}
     </View>
-    ) : (
-      <Text style={styles.errorMessage}>Select a product first</Text>
-    )}
-  </View>
   );
 }
 
@@ -161,7 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingHorizontal: 20,
   },
-  addToCartButton: {
+  addToCartButton:{
     backgroundColor: '#70A5CD',
     paddingVertical: 10,
     marginTop: 20,
@@ -173,6 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  
   errorMessage: {
     fontSize: 20,
     color: 'red',

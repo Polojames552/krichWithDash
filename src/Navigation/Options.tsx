@@ -113,7 +113,11 @@ export default function Options({navigation}) {
               component={HomeScreen}
               initialParams={{details}}
             />
-            <Drawer.Screen name="MyCart" component={MyCart} />
+            <Drawer.Screen
+              name="MyCart"
+              component={MyCart}
+              initialParams={{details}}
+            />
             <Drawer.Screen name="Received" component={Received} />
             <Drawer.Screen name="Orders" component={Orders} />
             <Drawer.Screen name="ProductDetails" component={ProductDetails} />

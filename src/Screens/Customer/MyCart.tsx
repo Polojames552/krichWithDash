@@ -1,6 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  FlatList,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {useRoute} from '@react-navigation/native';
 
 const productsData = [
   {
@@ -22,42 +31,101 @@ const productsData = [
   // Add more products as needed
 ];
 
-export default function MyCart({ navigation }) {
+export default function MyCart({navigation, route}) {
+  const details = route.params?.details || null;
+  const userData = JSON.parse(details.userData);
+  // console.log('User-ID: ', userData.id);
+  console.log('MyC:Route-From: ', route);
   const [products, setProducts] = useState(productsData);
   const [selectAll, setSelectAll] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleProductPress = (productId, image, title) => {
-    navigation.navigate('ProductDetails', { productId, image, title });
+  useEffect(() => {
+    fetchData();
+    // }, [data]);
+  }, []);
+  const fetchData = async () => {
+    const user_id = userData.id;
+    const response = await fetch(
+      `https://underdressed-legisl.000webhostapp.com/Display/DisplayMyCartWater.php?userId=${user_id}`,
+    );
+    const result = await response.json();
+    if (result.success) {
+      setData([...result.data]);
+      console.log('Result-latest: ', result.data);
+    } else {
+      console.error('Data fetch failed:', result.message);
+    }
+  };
+  console.log('Data-MyCart: ', data);
+  const handleProductPress = (price, description, image, quantity, details) => {
+    navigation.navigate('ProductDetails', {
+      path: 'MyCart',
+      price,
+      description,
+      quantity,
+      image,
+      details,
+    });
   };
 
-  const toggleSelect = (productId) => {
-    setProducts(prevProducts => 
-      prevProducts.map(product => 
-        product.id === productId ? {...product, selected: !product.selected} : product
-      )
+  const toggleSelect = productId => {
+    setProducts(prevProducts =>
+      prevProducts.map(product =>
+        product.id === productId
+          ? {...product, selected: !product.selected}
+          : product,
+      ),
     );
   };
 
   const toggleSelectAll = () => {
     setSelectAll(prev => !prev);
-    setProducts(prevProducts => 
-      prevProducts.map(product => ({...product, selected: !selectAll}))
+    setProducts(prevProducts =>
+      prevProducts.map(product => ({...product, selected: !selectAll})),
     );
   };
 
-  const renderProductItem = ({ item }) => (
-    <TouchableOpacity style={styles.productItem} onPress={() => handleProductPress(item.id, item.image, item.title)}>
+  const renderProductItem = ({item}) => (
+    <TouchableOpacity
+      style={styles.productItem}
+      onPress={() =>
+        handleProductPress(
+          item.Price,
+          item.Description,
+          item.Image,
+          item.Quantity,
+          details,
+        )
+      }>
       <TouchableOpacity onPress={() => toggleSelect(item.id)}>
-        <Icon name={item.selected ? "check-square-o" : "square-o"} size={25} color="black" />
+        <Icon
+          name={item.selected ? 'check-square-o' : 'square-o'}
+          size={25}
+          color="black"
+        />
       </TouchableOpacity>
-      <Image source={item.image} style={styles.productImage} />
+      <Image
+        source={{
+          uri:
+            'https://underdressed-legisl.000webhostapp.com/products/' +
+            item.Image,
+        }}
+        style={styles.productImage}
+      />
       <View style={styles.productInfo}>
         <View>
-          <Text style={styles.productTitle}>{item.title}</Text>
-          <Text style={styles.productPrice}>{item.price}</Text>
+          <Text style={styles.productTitle}>{item.Description}</Text>
+          <Text style={styles.productPrice}>
+            ₱{parseInt(item.Total_Price).toFixed(2)}
+          </Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => alert("Delete button pressed!")}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => alert('Delete button pressed!')}>
         <Icon name="trash" size={25} color="black" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -71,13 +139,20 @@ export default function MyCart({ navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={products}
+        data={data}
         renderItem={renderProductItem}
+        showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id.toString()}
       />
-      <TouchableOpacity style={styles.selectAllContainer} onPress={toggleSelectAll}>
+      <TouchableOpacity
+        style={styles.selectAllContainer}
+        onPress={toggleSelectAll}>
         <View style={styles.checkboxContainer}>
-          <Icon name={selectAll ? "check-square-o" : "square-o"} size={25} color="black" />
+          <Icon
+            name={selectAll ? 'check-square-o' : 'square-o'}
+            size={25}
+            color="black"
+          />
           <Text style={styles.selectAllText}>Select all</Text>
         </View>
       </TouchableOpacity>
