@@ -29,14 +29,14 @@ function CustomDrawerContent({navigation}) {
         icon={({color, size}) => (
           <FontAwesome5 name="home" size={size} color={color} />
         )}
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => navigation.replace('Home', {refreshing: true})}
       />
       <DrawerItem
         label="My Cart"
         icon={({color, size}) => (
           <FontAwesome5 name="shopping-cart" size={size} color={color} />
         )}
-        onPress={() => navigation.navigate('MyCart')}
+        onPress={() => navigation.navigate('MyCart', {refreshing: true})}
       />
       <DrawerItem
         label="Received"
@@ -87,8 +87,7 @@ function CustomDrawerContent({navigation}) {
 export default function Options({navigation}) {
   const route = useRoute();
   const details = route.params || null;
-  console.log('Options Screen:', JSON.stringify(details, null, 2));
-
+  // console.log('Options Screen:', JSON.stringify(details, null, 2));
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -107,11 +106,11 @@ export default function Options({navigation}) {
         {() => (
           <Drawer.Navigator
             drawerContent={props => <CustomDrawerContent {...props} />}
-            drawerContentOptions={{activeTintColor: 'blue'}}>
+            drawerContentOption={{activeTintColor: 'blue'}}>
             <Drawer.Screen
               name="Home"
               component={HomeScreen}
-              initialParams={{details}}
+              initialParams={{details, refreshing: true}}
             />
             <Drawer.Screen
               name="MyCart"

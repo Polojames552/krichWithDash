@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {
   View,
   Text,
@@ -6,28 +6,37 @@ import {
   Image,
   StyleSheet,
   Alert,
+  ScrollView,
 } from 'react-native';
 
 export default function ProductDetails({route}: any) {
-  const {price, image, description, productId, details, path} =
-    route.params || {};
+  const {
+    price,
+    total_price,
+    total_quantity,
+    image,
+    description,
+    productId,
+    details,
+    path,
+  } = route.params || {};
   const item_price = price;
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(price);
   const userData = JSON.parse(details.userData);
 
-  console.log('PD:Route-From: ', path);
-  // ProductDetails-qi8Dy0R0tz1TWOOVFsAoJ
   useEffect(() => {
     resetCurrentPrice();
+    console.log('Screen Refreshed:');
   }, [price, 1]);
 
   const resetCurrentPrice = () => {
-    setCurrentPrice(price || 0);
-    setQuantity(1);
+    console.log('Screen focused!');
+    setCurrentPrice(total_price || price);
+    setQuantity(total_quantity || 1);
   }; //this function is declared to refresh value of Price and quantity when adding order to cart
-
-  // console.log(route.params);
+  // console.log('PD:Route-From: ', currentPrice);
+  // console.log('Total-Quantity: ', quantity);
   const handleAddToCart = () => {
     const InsertAPIURL =
       'https://underdressed-legisl.000webhostapp.com/Add/AddToCartWater.php';
@@ -35,7 +44,6 @@ export default function ProductDetails({route}: any) {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
-    // console.log('New Filename:', newFilename);
     const Data = {
       User_id: userData.id,
       Product_id: productId,
@@ -73,6 +81,7 @@ export default function ProductDetails({route}: any) {
       ).toFixed(2)}`,
     );
   };
+
   const handleEditCart = () => {};
   return (
     <View style={styles.container}>
@@ -114,7 +123,7 @@ export default function ProductDetails({route}: any) {
                 onPress={() => {
                   setQuantity(quantity + 1);
                   const totalPrice = parseInt(currentPrice) + parseInt(price);
-                  setCurrentPrice(totalPrice); // Double the price
+                  setCurrentPrice(totalPrice);
                 }}>
                 <Text style={styles.controlButton}>+</Text>
               </TouchableOpacity>
@@ -129,7 +138,7 @@ export default function ProductDetails({route}: any) {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={{...styles.addToCartButton , backgroundColor: '#FF0000'}}
+              style={{...styles.addToCartButton, backgroundColor: '#FF0000'}}
               onPress={handleEditCart}>
               <Text style={styles.addToCartButtonText}>Edit to Cart</Text>
             </TouchableOpacity>
@@ -191,7 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingHorizontal: 20,
   },
-  addToCartButton:{
+  addToCartButton: {
     backgroundColor: '#70A5CD',
     paddingVertical: 10,
     marginTop: 20,
@@ -203,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  
+
   errorMessage: {
     fontSize: 20,
     color: 'red',
