@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -11,13 +12,16 @@ import {
 export default function HomeScreen({navigation, route}: any) {
   const details = route.params?.details || null;
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  console.log('H:Route-From: ', route);
+  const [refreshing, setRefreshing] = useState(route.params.refreshing);
+  // console.log('H:Route-From: ', route);
   useEffect(() => {
+    // console.log('Screen Refreshed');
+    setRefreshing(true);
     fetchData();
   }, []);
   // }, [data]);
   const fetchData = async () => {
+    // console.log('Screen Focused');
     try {
       const response = await fetch(
         'https://underdressed-legisl.000webhostapp.com/Display/DisplayHomeWater.php',
@@ -30,10 +34,16 @@ export default function HomeScreen({navigation, route}: any) {
       }
     } catch (error) {
       console.error('Error fetching data:', error.message);
-    } finally {
-      setLoading(false);
     }
+    // finally {
+    //   setLoading(false);
+    // }
   };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchData();
+  //   }, [data]),
+  // );
   const handleImagePress = (price, image, description, productId) => {
     navigation.navigate('ProductDetails', {
       path: 'Home',
@@ -44,8 +54,8 @@ export default function HomeScreen({navigation, route}: any) {
       productId,
     });
   };
-  console.log('Home Screen:', details.userData); //Out put id of user who logged in
-  console.log('Products-ID:', data);
+  // console.log('Home Screen:', details.userData);
+  // console.log('Products-ID:', data);
 
   return (
     <View style={styles.container}>
@@ -54,18 +64,12 @@ export default function HomeScreen({navigation, route}: any) {
           data={data}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
+          refreshing={refreshing}
           renderItem={({item}) => (
             <TouchableOpacity
               style={styles.imageContainer}
               onPress={() =>
-                handleImagePress(
-                  item.Price,
-
-                  item.Image,
-
-                  'Round',
-                  item.id,
-                )
+                handleImagePress(item.Price, item.Image, item.Name, item.id)
               }>
               <Image
                 source={{

@@ -35,18 +35,21 @@ export default function MyCart({navigation, route}) {
   const details = route.params?.details || null;
   const userData = JSON.parse(details.userData);
   // console.log('User-ID: ', userData.id);
-  console.log('MyC:Route-From: ', route);
+  // console.log('MyC:Route-From: ', route);
   const [products, setProducts] = useState(productsData);
   const [selectAll, setSelectAll] = useState(false);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const load = route.params.refreshing;
+  const [refreshing, setRefreshing] = useState(load);
   useEffect(() => {
+    console.log('MyCart2: ', refreshing);
     fetchData();
+
     // }, [data]);
+    // }, [products]);
   }, []);
   const fetchData = async () => {
+    console.log('MyCart2: ', refreshing);
     const user_id = userData.id;
     const response = await fetch(
       `https://underdressed-legisl.000webhostapp.com/Display/DisplayMyCartWater.php?userId=${user_id}`,
@@ -54,18 +57,29 @@ export default function MyCart({navigation, route}) {
     const result = await response.json();
     if (result.success) {
       setData([...result.data]);
-      console.log('Result-latest: ', result.data);
+      setProducts(result.data.map(product => ({...product, selected: false})));
+      // setRefreshing(false);
+      // console.log('Result-latest: ', result.data);
     } else {
       console.error('Data fetch failed:', result.message);
     }
+    setRefreshing(false);
   };
-  console.log('Data-MyCart: ', data);
-  const handleProductPress = (price, description, image, quantity, details) => {
+  // console.log('Data-MyCart: ', data);
+  const handleProductPress = (
+    price,
+    total_price,
+    description,
+    image,
+    total_quantity,
+    details,
+  ) => {
     navigation.navigate('ProductDetails', {
       path: 'MyCart',
       price,
+      total_price,
       description,
-      quantity,
+      total_quantity,
       image,
       details,
     });
@@ -94,6 +108,7 @@ export default function MyCart({navigation, route}) {
       onPress={() =>
         handleProductPress(
           item.Price,
+          item.Total_Price,
           item.Description,
           item.Image,
           item.Quantity,
@@ -135,14 +150,19 @@ export default function MyCart({navigation, route}) {
     const selectedProducts = products.filter(product => product.selected);
     // Implement your checkout logic with selected products
   };
-
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={products}
         renderItem={renderProductItem}
         showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id.toString()}
+        refreshing={refreshing}
+        onRefresh={handleRefresh} //put this on navigating screens
       />
       <TouchableOpacity
         style={styles.selectAllContainer}
