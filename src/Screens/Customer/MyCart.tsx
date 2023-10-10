@@ -33,7 +33,7 @@ const productsData = [
 
 export default function MyCart({navigation, route}) {
   const details = route.params?.details || null;
-  const userData = JSON.parse(details.userData);
+  const userData = (details.userData);
   // console.log('User-ID: ', userData.id);
   // console.log('MyC:Route-From: ', route);
   const [products, setProducts] = useState(productsData);

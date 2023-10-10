@@ -5,6 +5,8 @@ import React, {useState} from 'react';
 // import Orders from '../Screens/Customer/Orders';
 // import ProductDetails from '../Screens/Customer/ProductDetails';
 // import AccountDetails from '../Screens/Customer/AccountDetails';
+import ProductAddScreen from '../Screens/Admin/ProductAddScreen';
+import ProductEditScreen from '../Screens/Admin/ProductEditScreen';
 import Dashboard from '../Screens/Admin/Dashboard';
 import Products from '../Screens/Admin/Products';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -31,16 +33,31 @@ function CustomDrawerContent({navigation}) {
         icon={({color, size}) => (
           <FontAwesome5 name="home" size={size} color={color} />
         )}
-        onPress={() => navigation.navigate('Dashboard')}
+        onPress={() => navigation.navigate('Home')}
       />
       <DrawerItem
-        label="My Cart"
+        label="Products"
         icon={({color, size}) => (
           <FontAwesome5 name="shopping-cart" size={size} color={color} />
         )}
         onPress={() => navigation.navigate('Products')}
       />
+       <DrawerItem
+        label="Products Details"
+        icon={({color, size}) => (
+          <FontAwesome5 name="shopping-cart" size={size} color={color} />
+        )}
+        onPress={() => navigation.navigate('EditProducts')}
+      />
+       <DrawerItem
+        label="Add Product"
+        icon={({color, size}) => (
+          <FontAwesome5 name="shopping-cart" size={size} color={color} />
+        )}
+        onPress={() => navigation.navigate('AddProducts')}
+      />
 
+     
       {navigation.isFocused() && (
         <View style={{marginTop: '108%'}}>
           <TouchableOpacity
@@ -89,6 +106,10 @@ export default function AdminOptions({navigation}) {
               initialParams={{details}}
             />
             <Drawer.Screen name="Products" component={Products} />
+            <Drawer.Screen name="EditProducts" component={ProductEditScreen} />
+            <Drawer.Screen name="AddProducts" component={ProductAddScreen} />
+            
+           
           </Drawer.Navigator>
         )}
       </Stack.Screen>
