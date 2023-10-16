@@ -24,7 +24,7 @@ export default function HomeScreen({navigation, route}: any) {
     // console.log('Screen Focused');
     try {
       const response = await fetch(
-        'https://underdressed-legisl.000webhostapp.com/Display/DisplayHomeWater.php',
+        'https://krichsecret.000webhostapp.com/Products/Display/DisplayWater.php',
       );
       const result = await response.json();
       if (result.success) {
@@ -74,7 +74,7 @@ export default function HomeScreen({navigation, route}: any) {
               <Image
                 source={{
                   uri:
-                    'https://underdressed-legisl.000webhostapp.com/products/' +
+                    'https://krichsecret.000webhostapp.com/Products/Image/' +
                     item.Image,
                 }}
                 style={styles.image}

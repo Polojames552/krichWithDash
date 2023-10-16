@@ -15,6 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Image} from 'react-native';
+import UploadImage from './UploadImage';
 
 const options = {
   title: 'Select Image',
@@ -39,6 +40,7 @@ const RegistrationScreen = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
   const openGallery = async () => {
@@ -106,6 +108,7 @@ const RegistrationScreen = ({navigation}) => {
       setPasswordError('');
     }
   };
+  const uploadMyImage = async () => {};
 
   const insertRecord = async () => {
     if (
@@ -124,36 +127,41 @@ const RegistrationScreen = ({navigation}) => {
       // const baseUrl = "http://krichwater.infinityfreeapp.com/";
       // const InsertAPIURL = baseUrl+"query/RegisterUser.php";
       const InsertAPIURL =
-        'https://underdressed-legisl.000webhostapp.com/Authentication/Register.php';
+        'https://krichsecret.000webhostapp.com/Authentication/Register.php';
       const header = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       };
 
       let base_url =
-        'https://underdressed-legisl.000webhostapp.com/ImageUploader/RegisterUploadImage.php';
+        'https://krichsecret.000webhostapp.com/Authentication/RegisterUploadImage.php';
       const formdata = new FormData();
       formdata.append('submit', 'ok');
       formdata.append('file', {
         uri: selectedImage,
-        type: 'image/jpeg', // You may need to set the correct image type here
-        name: 'user_image.jpg', // You can customize the file name
+        type: 'image/jpeg',
+        name: 'user_image.jpg',
       });
+
       let res = await fetch(base_url, {
-        method: 'post',
+        method: 'POST',
         body: formdata,
+        // Note: You might not need to set 'Content-Type' explicitly
         headers: {
           'Content-Type': 'multipart/form-data',
-          // Add any other headers as needed
         },
       });
+
       if (!res.ok) {
         throw new Error('Server returned an error');
       }
+
       let responseJson = await res.json();
       console.log(responseJson, 'responseJson');
+      // Check the server response for the new filename
       const newFilename = responseJson.file_name;
-      // console.log('New Filename:', newFilename);
+      console.log('New Filename:', newFilename);
+
       const Data = {
         Fname: firstname,
         Lname: lastname,
@@ -163,8 +171,10 @@ const RegistrationScreen = ({navigation}) => {
         Username: username,
         Password: password,
         Picture: newFilename,
+        // Picture: newFilename,
       };
       console.log(Data);
+
       fetch(InsertAPIURL, {
         method: 'POST',
         headers: header,
@@ -177,11 +187,20 @@ const RegistrationScreen = ({navigation}) => {
           return response.json();
         })
         .then(response => {
-          Alert.alert('Attention', response[0].Message);
+          if (response && response.success) {
+            Alert.alert('Attention', response.message);
+            console.log('Response: ', response);
+          } else {
+            // Handle the case where 'success' or 'message' is not present in the response
+            console.error(
+              'Invalid response format: Missing success or message property',
+            );
+          }
         })
         .catch(error => {
           Alert.alert('Attention', `Network error: ${error.message}`);
         });
+
       setFirstname('');
       setLastname('');
       setEmail('');
@@ -295,6 +314,11 @@ const RegistrationScreen = ({navigation}) => {
             disabled={isButtonDisabled}>
             <Text style={styles.buttonText}>Create Account</Text>
           </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={[styles.button, {backgroundColor: '#4A78D3'}]}
+            onPress={uploadMyImage}>
+            <Text style={styles.buttonText}>Upload Image</Text>
+          </TouchableOpacity> */}
 
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Already Have an Account?</Text>

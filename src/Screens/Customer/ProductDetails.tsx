@@ -13,7 +13,7 @@ export default function ProductDetails({route}: any) {
   const {
     price,
     total_price,
-    total_quantity,
+    total_quantity: initialTotalquant,
     image,
     description,
     productId,
@@ -23,15 +23,14 @@ export default function ProductDetails({route}: any) {
   const item_price = price;
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(price);
-  const userData = JSON.parse(details.userData);
-
+  const total_quantity = parseInt(initialTotalquant);
+  // const userData = JSON.parse(details.userData);
+  // console.log('Not parse', details.userData.id);
   useEffect(() => {
     resetCurrentPrice();
-    console.log('Screen Refreshed:');
-  }, [price, 1]);
-
+  }, [total_price, total_quantity]);
+  console.log(path, ': ', productId);
   const resetCurrentPrice = () => {
-    console.log('Screen focused!');
     setCurrentPrice(total_price || price);
     setQuantity(total_quantity || 1);
   }; //this function is declared to refresh value of Price and quantity when adding order to cart
@@ -39,13 +38,13 @@ export default function ProductDetails({route}: any) {
   // console.log('Total-Quantity: ', quantity);
   const handleAddToCart = () => {
     const InsertAPIURL =
-      'https://underdressed-legisl.000webhostapp.com/Add/AddToCartWater.php';
+      'https://krichsecret.000webhostapp.com/Products/Add&Edit/AddtoCart.php';
     const header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
     const Data = {
-      User_id: userData.id,
+      User_id: details.userData.id,
       Product_id: productId,
       Quantity: quantity,
       Price: item_price,
@@ -66,13 +65,17 @@ export default function ProductDetails({route}: any) {
         return response.json();
       })
       .then(response => {
-        Alert.alert('Attention', response[0].Message);
-        resetCurrentPrice();
+        if (response && response.success) {
+          Alert.alert('Attention', response.message);
+          console.log('Response: ', response);
+        } else {
+          // Handle the case where 'success' or 'message' is not present in the response
+          console.error(
+            'Invalid response format: Missing success or message property',
+          );
+        }
       })
       .catch(error => {
-        console.error('Error fetching data:', error.message);
-        console.log('Response status:', error.response.status);
-        console.log('Response text:', error.response.text());
         Alert.alert('Attention', `Network error: ${error.message}`);
       });
     console.log(
@@ -80,9 +83,59 @@ export default function ProductDetails({route}: any) {
         currentPrice,
       ).toFixed(2)}`,
     );
+    setQuantity(1);
+    setCurrentPrice(price);
   };
 
-  const handleEditCart = () => {};
+  const handleEditCart = () => {
+    const InsertAPIURL =
+      'https://krichsecret.000webhostapp.com/Products/Add&Edit/EditCartWater.php';
+    const header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+    const Data = {
+      User_id: details.userData.id,
+      Product_id: productId,
+      Quantity: quantity,
+      Price: item_price,
+      Total_Price: currentPrice,
+      Description: description,
+      Image: image,
+    };
+    console.log(Data);
+    fetch(InsertAPIURL, {
+      method: 'POST',
+      headers: header,
+      body: JSON.stringify(Data),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(response => {
+        if (response && response.success) {
+          Alert.alert('Attention', response.message);
+          console.log('Response: ', response);
+        } else {
+          // Handle the case where 'success' or 'message' is not present in the response
+          console.error(
+            'Invalid response format: Missing success or message property',
+          );
+        }
+      })
+      .catch(error => {
+        Alert.alert('Attention', `Network error: ${error.message}`);
+      });
+    console.log(
+      `Edited ${quantity} ${description} to cart with price ₱${parseInt(
+        currentPrice,
+      ).toFixed(2)}`,
+    );
+  };
+
   return (
     <View style={styles.container}>
       {price && description && quantity ? (
@@ -92,7 +145,7 @@ export default function ProductDetails({route}: any) {
               <Image
                 source={{
                   uri:
-                    'https://underdressed-legisl.000webhostapp.com/products/' +
+                    'https://krichsecret.000webhostapp.com/Products/Image/' +
                     image,
                 }}
                 style={styles.image}
@@ -122,8 +175,10 @@ export default function ProductDetails({route}: any) {
               <TouchableOpacity
                 onPress={() => {
                   setQuantity(quantity + 1);
+                  const quant = quantity + 1;
                   const totalPrice = parseInt(currentPrice) + parseInt(price);
                   setCurrentPrice(totalPrice);
+                  console.log(quant);
                 }}>
                 <Text style={styles.controlButton}>+</Text>
               </TouchableOpacity>

@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 
-export default function AddProductScreen({ navigation }) {
+export default function AddProductScreen({navigation}) {
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productDescription, setProductDescription] = useState('');
@@ -25,7 +33,7 @@ export default function AddProductScreen({ navigation }) {
   };
 
   const handleImagePicker = () => {
-    ImagePicker.showImagePicker({ title: 'Select Image' }, (response) => {
+    ImagePicker.showImagePicker({title: 'Select Image'}, response => {
       if (!response.didCancel && !response.error) {
         setProductImage(response.uri);
       }
@@ -38,14 +46,14 @@ export default function AddProductScreen({ navigation }) {
         style={styles.input}
         placeholder="Product Name"
         value={productName}
-        onChangeText={(text) => setProductName(text)}
+        onChangeText={text => setProductName(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Product Price"
         keyboardType="numeric"
         value={productPrice}
-        onChangeText={(text) => setProductPrice(text)}
+        onChangeText={text => setProductPrice(text)}
       />
       <TextInput
         style={styles.input}
@@ -53,11 +61,13 @@ export default function AddProductScreen({ navigation }) {
         multiline
         numberOfLines={4}
         value={productDescription}
-        onChangeText={(text) => setProductDescription(text)}
+        onChangeText={text => setProductDescription(text)}
       />
       <TouchableOpacity onPress={handleImagePicker}>
         <View style={styles.imageContainer}>
-          {productImage && <Image source={{ uri: productImage }} style={styles.image} />}
+          {productImage && (
+            <Image source={{uri: productImage}} style={styles.image} />
+          )}
           {!productImage && <Text>Choose an image</Text>}
         </View>
       </TouchableOpacity>
