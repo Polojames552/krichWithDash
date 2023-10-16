@@ -33,26 +33,31 @@ const productsData = [
 
 export default function MyCart({navigation, route}) {
   const details = route.params?.details || null;
-  const userData = (details.userData);
+  const userData = details.userData;
   // console.log('User-ID: ', userData.id);
   // console.log('MyC:Route-From: ', route);
-  const [products, setProducts] = useState(productsData);
+
   const [selectAll, setSelectAll] = useState(false);
   const [data, setData] = useState([]);
   const load = route.params.refreshing;
-  const [refreshing, setRefreshing] = useState(load);
-  useEffect(() => {
-    console.log('MyCart2: ', refreshing);
-    fetchData();
 
+  const [refreshing, setRefreshing] = useState(false);
+  const [products, setProducts] = useState(productsData);
+
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [totalP, setTotalP] = useState(0);
+  // const [refreshing, setRefreshing] = useState(load);
+  useEffect(() => {
+    // console.log('MyCart2: ', refreshing);
+    fetchData();
     // }, [data]);
     // }, [products]);
   }, []);
   const fetchData = async () => {
-    console.log('MyCart2: ', refreshing);
+    // console.log('MyCart2: ', refreshing);
     const user_id = userData.id;
     const response = await fetch(
-      `https://underdressed-legisl.000webhostapp.com/Display/DisplayMyCartWater.php?userId=${user_id}`,
+      `https://krichsecret.000webhostapp.com/Products/Display/DisplayMyCartWater.php?userId=${user_id}`,
     );
     const result = await response.json();
     if (result.success) {
@@ -63,13 +68,13 @@ export default function MyCart({navigation, route}) {
     } else {
       console.error('Data fetch failed:', result.message);
     }
-    setRefreshing(false);
   };
   // console.log('Data-MyCart: ', data);
   const handleProductPress = (
     price,
     total_price,
     description,
+    productId,
     image,
     total_quantity,
     details,
@@ -79,13 +84,14 @@ export default function MyCart({navigation, route}) {
       price,
       total_price,
       description,
+      productId,
       total_quantity,
       image,
       details,
     });
   };
 
-  const toggleSelect = productId => {
+  const toggleSelect = (productId, Total_Price) => {
     setProducts(prevProducts =>
       prevProducts.map(product =>
         product.id === productId
@@ -93,15 +99,44 @@ export default function MyCart({navigation, route}) {
           : product,
       ),
     );
+
+    setSelectedItems(prevSelectedItems =>
+      prevSelectedItems.includes(productId)
+        ? prevSelectedItems.filter(id => id !== productId)
+        : [...prevSelectedItems, productId],
+    );
+
+    setTotalP(prevTotalP => {
+      const priceChange = selectedItems.includes(productId)
+        ? -parseInt(Total_Price)
+        : parseInt(Total_Price);
+      return prevTotalP + priceChange;
+    });
   };
 
   const toggleSelectAll = () => {
     setSelectAll(prev => !prev);
-    setProducts(prevProducts =>
-      prevProducts.map(product => ({...product, selected: !selectAll})),
-    );
+    setProducts(prevProducts => {
+      const newProducts = prevProducts.map(product => ({
+        ...product,
+        selected: !selectAll,
+      }));
+      const totalPriceSum = newProducts.reduce(
+        (sum, product) =>
+          sum + (product.selected ? parseInt(product.Total_Price) : 0),
+        0,
+      );
+      setTotalP(totalPriceSum);
+      return newProducts;
+    });
   };
 
+  // const toggleSelectAll = () => {
+  //   setSelectAll(prev => !prev);
+  //   setProducts(prevProducts =>
+  //     prevProducts.map(product => ({...product, selected: !selectAll})),
+  //   );
+  // };
   const renderProductItem = ({item}) => (
     <TouchableOpacity
       style={styles.productItem}
@@ -110,12 +145,13 @@ export default function MyCart({navigation, route}) {
           item.Price,
           item.Total_Price,
           item.Description,
+          item.Product_id,
           item.Image,
           item.Quantity,
           details,
         )
       }>
-      <TouchableOpacity onPress={() => toggleSelect(item.id)}>
+      <TouchableOpacity onPress={() => toggleSelect(item.id, item.Total_Price)}>
         <Icon
           name={item.selected ? 'check-square-o' : 'square-o'}
           size={25}
@@ -125,7 +161,7 @@ export default function MyCart({navigation, route}) {
       <Image
         source={{
           uri:
-            'https://underdressed-legisl.000webhostapp.com/products/' +
+            'https://krichsecret.000webhostapp.com/Products/Image/' +
             item.Image,
         }}
         style={styles.productImage}
@@ -140,7 +176,7 @@ export default function MyCart({navigation, route}) {
       </View>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => alert('Delete button pressed!')}>
+        onPress={() => Alert.alert('Delete button pressed!')}>
         <Icon name="trash" size={25} color="black" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -148,7 +184,7 @@ export default function MyCart({navigation, route}) {
 
   const handleCheckout = () => {
     const selectedProducts = products.filter(product => product.selected);
-    // Implement your checkout logic with selected products
+    console.log('selected: ', selectedProducts);
   };
   const handleRefresh = () => {
     setRefreshing(true);
@@ -176,6 +212,7 @@ export default function MyCart({navigation, route}) {
           <Text style={styles.selectAllText}>Select all</Text>
         </View>
       </TouchableOpacity>
+      <Text style={styles.totalPriceText}>Price: {totalP}</Text>
       <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
         <Text style={styles.checkoutText}>Checkout</Text>
       </TouchableOpacity>
@@ -242,6 +279,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
+  },
+  totalPriceText: {
+    padding: 10,
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 75,
+    right: 20,
+    fontSize: 16,
   },
   checkoutText: {
     color: 'white',

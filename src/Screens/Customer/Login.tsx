@@ -14,7 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL =
-  'https://underdressed-legisl.000webhostapp.com/Authentication/Login.php';
+  'https://krichsecret.000webhostapp.com/Authentication/Login.php';
 const LoginScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,11 +31,11 @@ const LoginScreen = ({navigation}: any) => {
     try {
       const token = await AsyncStorage.getItem('authToken');
       const userDataString = await AsyncStorage.getItem('user');
-  
+
       if (token) {
         const userData = JSON.parse(userDataString); // Parse user object
         const role = userData.Role;
-  
+
         if (role === 'Admin') {
           navigation.replace('AdminOptions', {userData});
         } else if (role === 'User') {
@@ -48,7 +48,7 @@ const LoginScreen = ({navigation}: any) => {
       console.error('Error checking authentication:', error);
     }
   };
-  
+
   const checkLogin = async () => {
     const isLoggedIn = await AsyncStorage.getItem('login');
     if (isLoggedIn === 'true') {
@@ -72,12 +72,12 @@ const LoginScreen = ({navigation}: any) => {
         await AsyncStorage.setItem('authToken', token);
         await AsyncStorage.setItem('user', JSON.stringify(user));
         await AsyncStorage.setItem('login', 'true');
-  
+
         const userData = JSON.parse(JSON.stringify(user)); // Parse user object
-  
+
         // Extract Role
         const role = userData.Role;
-  
+
         if (role === 'Admin') {
           navigation.replace('AdminOptions', {userData});
         } else if (role === 'User') {
@@ -85,7 +85,6 @@ const LoginScreen = ({navigation}: any) => {
         } else {
           // Handle other roles if needed
         }
-  
       } else {
         Alert.alert('Error', data.message);
         setPassword('');
