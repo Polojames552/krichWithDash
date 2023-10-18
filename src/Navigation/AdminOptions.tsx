@@ -5,6 +5,7 @@ import React, {useState} from 'react';
 // import Orders from '../Screens/Customer/Orders';
 // import ProductDetails from '../Screens/Customer/ProductDetails';
 // import AccountDetails from '../Screens/Customer/AccountDetails';
+import UserDetails from '../Screens/Admin/UserDetails';
 import ProductAddScreen from '../Screens/Admin/ProductAddScreen';
 import ProductEditScreen from '../Screens/Admin/ProductEditScreen';
 import Dashboard from '../Screens/Admin/Dashboard';
@@ -41,20 +42,6 @@ function CustomDrawerContent({navigation}) {
           <FontAwesome5 name="shopping-cart" size={size} color={color} />
         )}
         onPress={() => navigation.navigate('Products')}
-      />
-       <DrawerItem
-        label="Products Details"
-        icon={({color, size}) => (
-          <FontAwesome5 name="shopping-cart" size={size} color={color} />
-        )}
-        onPress={() => navigation.navigate('EditProducts')}
-      />
-       <DrawerItem
-        label="Add Product"
-        icon={({color, size}) => (
-          <FontAwesome5 name="shopping-cart" size={size} color={color} />
-        )}
-        onPress={() => navigation.navigate('AddProducts')}
       />
 
      
@@ -105,14 +92,46 @@ export default function AdminOptions({navigation}) {
               component={Dashboard}
               initialParams={{details}}
             />
-            <Drawer.Screen name="Products" component={Products} />
-            <Drawer.Screen name="EditProducts" component={ProductEditScreen} />
-            <Drawer.Screen name="AddProducts" component={ProductAddScreen} />
-            
            
+           <Drawer.Screen name="Products" component={Products} />
           </Drawer.Navigator>
         )}
       </Stack.Screen>
+      
+            <Stack.Screen name="EditProducts" component={ProductEditScreen} options={{
+          headerTitle: 'ADMIN',
+          headerLeft: () => null,
+          headerStyle: {
+            backgroundColor: '#70A5CD',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontSize: 24,
+          },
+        }} />
+            <Stack.Screen name="AddProducts" component={ProductAddScreen}options={{
+          headerTitle: 'ADMIN',
+          headerLeft: () => null,
+          headerStyle: {
+            backgroundColor: '#70A5CD',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontSize: 24,
+          },
+        }}/>
+            
+      <Stack.Screen name="UserDetails" component={UserDetails}options={{
+          headerTitle: 'ADMIN',
+          headerLeft: () => null,
+          headerStyle: {
+            backgroundColor: '#70A5CD',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontSize: 24,
+          },
+        }}/>
     </Stack.Navigator>
   );
 }

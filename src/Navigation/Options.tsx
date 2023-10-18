@@ -29,7 +29,7 @@ function CustomDrawerContent({navigation}) {
         icon={({color, size}) => (
           <FontAwesome5 name="home" size={size} color={color} />
         )}
-        onPress={() => navigation.replace('Home', {refreshing: true})}
+        onPress={() => navigation.navigate('Home', {refreshing: true})}
       />
       <DrawerItem
         label="My Cart"
@@ -52,20 +52,7 @@ function CustomDrawerContent({navigation}) {
         )}
         onPress={() => navigation.navigate('Orders')}
       />
-      <DrawerItem
-        label="Product Details"
-        icon={({color, size}) => (
-          <FontAwesome5 name="info-circle" size={size} color={color} />
-        )}
-        onPress={() => navigation.navigate('ProductDetails')}
-      />
-      <DrawerItem
-        label="Account Details"
-        icon={({color, size}) => (
-          <FontAwesome5 name="user" size={size} color={'gray'} />
-        )}
-        onPress={() => navigation.navigate('AccountDetails')}
-      />
+
       {navigation.isFocused() && (
         <View style={{marginTop: '108%'}}>
           <TouchableOpacity
@@ -104,26 +91,49 @@ export default function Options({navigation}) {
           },
         }}>
         {() => (
-          <Drawer.Navigator
-            drawerContent={props => <CustomDrawerContent {...props} />}
-            drawerContentOption={{activeTintColor: 'blue'}}>
-            <Drawer.Screen
-              name="Home"
-              component={HomeScreen}
-              initialParams={{details, refreshing: true}}
-            />
-            <Drawer.Screen
-              name="MyCart"
-              component={MyCart}
-              initialParams={{details}}
-            />
-            <Drawer.Screen name="Received" component={Received} />
-            <Drawer.Screen name="Orders" component={Orders} />
-            <Drawer.Screen name="ProductDetails" component={ProductDetails} />
-            <Drawer.Screen name="AccountDetails" component={AccountDetails} />
-          </Drawer.Navigator>
+         <Drawer.Navigator
+         drawerContent={props => <CustomDrawerContent {...props} />}
+         drawerContentOption={{activeTintColor: 'blue'}}
+         initialRouteName="Home" // Set the initial route to Home
+       >
+         <Drawer.Screen
+           name="Home"
+           component={HomeScreen}
+           initialParams={{details, refreshing: true}}
+         />
+         <Drawer.Screen
+           name="MyCart"
+           component={MyCart}
+           initialParams={{details}}
+         />
+         <Drawer.Screen name="Received" component={Received}  />
+         <Drawer.Screen name="Orders" component={Orders} />
+       </Drawer.Navigator>
+       
         )}
       </Stack.Screen>
+      <Stack.Screen name="ProductDetails" component={ProductDetails} options={{
+          headerTitle: 'KRICH WATER REFILLING STATION',
+          headerLeft: () => null,
+          headerStyle: {
+            backgroundColor: '#70A5CD',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontSize: 24,
+          },
+        }} />
+      <Stack.Screen name="AccountDetails" component={AccountDetails} options={{
+          headerTitle: 'KRICH WATER REFILLING STATION',
+          headerLeft: () => null,
+          headerStyle: {
+            backgroundColor: '#70A5CD',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontSize: 24,
+          },
+        }} />
     </Stack.Navigator>
   );
 }
