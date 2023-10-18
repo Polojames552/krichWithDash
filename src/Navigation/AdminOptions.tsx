@@ -5,6 +5,7 @@ import React, {useState} from 'react';
 // import Orders from '../Screens/Customer/Orders';
 // import ProductDetails from '../Screens/Customer/ProductDetails';
 // import AccountDetails from '../Screens/Customer/AccountDetails';
+import OrderList from '../Screens/Admin/OrderList';
 import UserDetails from '../Screens/Admin/UserDetails';
 import ProductAddScreen from '../Screens/Admin/ProductAddScreen';
 import ProductEditScreen from '../Screens/Admin/ProductEditScreen';
@@ -42,6 +43,13 @@ function CustomDrawerContent({navigation}) {
           <FontAwesome5 name="shopping-cart" size={size} color={color} />
         )}
         onPress={() => navigation.navigate('Products')}
+      />
+      <DrawerItem
+        label="Orders"
+        icon={({color, size}) => (
+          <FontAwesome5 name="shopping-cart" size={size} color={color} />
+        )}
+        onPress={() => navigation.navigate('Orders')}
       />
 
      
@@ -94,6 +102,7 @@ export default function AdminOptions({navigation}) {
             />
            
            <Drawer.Screen name="Products" component={Products} />
+           <Drawer.Screen name="Orders" component={OrderList}/>
           </Drawer.Navigator>
         )}
       </Stack.Screen>
@@ -132,6 +141,7 @@ export default function AdminOptions({navigation}) {
             fontSize: 24,
           },
         }}/>
+        
     </Stack.Navigator>
   );
 }
