@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Image} from 'react-native';
+import React, { useState } from "react";
+import { View, TextInput, Button, Image, StyleSheet } from "react-native";
 
-const ProductEditScreen = ({route}) => {
-  const {Price, imageUrl, Name} = route.params || {};
+const ProductEditScreen = ({ route }) => {
+    const { price, imageUrl, description } = route.params || {};
 
-  const [editedPrice, setEditedPrice] = useState(Price);
-  const [editedDescription, setEditedDescription] = useState(Name);
-  console.log('Image url: ', imageUrl);
+  const [editedPrice, setEditedPrice] = useState(price);
+  const [editedDescription, setEditedDescription] = useState(description);
+
   const handleSave = () => {
     // Implement logic to save the edited details
     // You can use `editedPrice` and `editedDescription` in your logic.
@@ -14,25 +14,19 @@ const ProductEditScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri:
-            'https://krichsecret.000webhostapp.com/Products/Image/' + imageUrl,
-        }}
-        style={styles.image}
-      />
+      <Image source={{ uri: imageUrl }} style={styles.image} />
       <TextInput
         style={styles.input}
         placeholder="Price"
-        value={editedPrice}
-        onChangeText={text => setEditedPrice(text)}
+        value={editedPrice.toString()}
+        onChangeText={(text) => setEditedPrice(text)}
         keyboardType="numeric"
       />
       <TextInput
         style={styles.input}
         placeholder="Description"
         value={editedDescription}
-        onChangeText={text => setEditedDescription(text)}
+        onChangeText={(text) => setEditedDescription(text)}
       />
       <Button title="Save" onPress={handleSave} />
     </View>
@@ -43,8 +37,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
     width: 100,
@@ -52,10 +46,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
-    width: '80%',
+    width: "80%",
     height: 40,
     marginBottom: 16,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     paddingHorizontal: 8,
   },

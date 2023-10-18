@@ -11,25 +11,25 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useRoute} from '@react-navigation/native';
 
-// const productsData = [
-//   {
-//     id: 1,
-//     image: require('../../Assets/Images/round.jpg'),
-//     title: 'Received Product 1',
-//     price: '$10.99',
-//     quantity: 1,
-//     selected: false,
-//   },
-//   {
-//     id: 2,
-//     image: require('../../Assets/Images/eightliters.jpeg'),
-//     title: 'Received Product 2',
-//     price: '$15.99',
-//     quantity: 2,
-//     selected: false,
-//   },
-//   // Add more products as needed
-// ];
+const productsData = [
+  {
+    id: 1,
+    image: require('../../Assets/Images/round.jpg'),
+    title: 'Received Product 1',
+    price: '$10.99',
+    quantity: 1,
+    selected: false,
+  },
+  {
+    id: 2,
+    image: require('../../Assets/Images/eightliters.jpeg'),
+    title: 'Received Product 2',
+    price: '$15.99',
+    quantity: 2,
+    selected: false,
+  },
+  // Add more products as needed
+];
 
 export default function MyCart({navigation, route}) {
   const details = route.params?.details || null;
@@ -42,7 +42,7 @@ export default function MyCart({navigation, route}) {
   const load = route.params.refreshing;
 
   const [refreshing, setRefreshing] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(productsData);
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalP, setTotalP] = useState(0);
@@ -199,11 +199,6 @@ export default function MyCart({navigation, route}) {
         keyExtractor={item => item.id.toString()}
         refreshing={refreshing}
         onRefresh={handleRefresh} //put this on navigating screens
-        ListEmptyComponent={() => (
-          <Text style={{textAlign: 'center', marginTop: 20}}>
-            No data available.
-          </Text>
-        )}
       />
       <TouchableOpacity
         style={styles.selectAllContainer}
