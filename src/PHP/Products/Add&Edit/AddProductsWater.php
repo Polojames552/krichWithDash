@@ -16,23 +16,17 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents("php://input"));
 
 // Assign values to variables
-$fname = $data->Fname;
-$lname = $data->Lname;
-$email = $data->Email;
-$address = $data->Address;
-$number = $data->Number;
-$user = $data->Username; // Changed from $username to $user to avoid conflict
-$password = $data->Password;
+$name = $data->ProductName;
+$price = $data->ProductPrice;
 $picture = $data->Picture;
-$currentTime = date("Y-m-d H:i:s");
 
 // Using prepared statements to prevent SQL injection
-$sql = $conn->prepare("INSERT INTO users_tbl (Fname, Lname, Email, Address, Number, Username, Password, Picture, Status, Role, time_updated) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Unverified', 'User', ?)");
-$sql->bind_param("sssssssss", $fname, $lname, $email, $address, $number, $user, $password, $picture, $currentTime);
+$sql = $conn->prepare("INSERT INTO waters_tbl (Name, Price, Image) 
+                       VALUES (?, ?, ?)");
+$sql->bind_param("sis", $name, $price, $picture);
 
 if ($sql->execute()) {
-    $response = array('success' => true, 'message' => 'Registration Successful');
+    $response = array('success' => true, 'message' => 'Product added Successfully');
     echo json_encode($response);
 } else {
     $response = array('success' => false, 'message' => "Error: " . $sql->error);

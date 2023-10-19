@@ -23,7 +23,7 @@ $Price = $data->Price;
 $Total_Price = $data->Total_Price;
 $Description = $data->Description;
 $Image = $data->Image;
-
+$currentTime = date("Y-m-d H:i:s");
 $find = "SELECT * FROM cart_tbl WHERE User_id=? AND Product_id=?";
 $stmt = $conn->prepare($find);
 $stmt->bind_param("ii", $User_id, $Product_id);
@@ -56,9 +56,9 @@ if ($result->num_rows > 0) {
 } else {
     // Using prepared statements to prevent SQL injection
     $Status = "Pending";
-    $sql_insert = $conn->prepare("INSERT INTO cart_tbl (User_id, Product_id, Quantity, Price, Total_Price, Description, Image,Status) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?,?)");
-    $sql_insert->bind_param("iiiiisss", $User_id, $Product_id, $Quantity, $Price, $Total_Price, $Description, $Image,$Status);
+    $sql_insert = $conn->prepare("INSERT INTO cart_tbl (User_id, Product_id, Quantity, Price, Total_Price, Description, Image,Status,time_updated) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?,?,?)");
+    $sql_insert->bind_param("iiiiissss", $User_id, $Product_id, $Quantity, $Price, $Total_Price, $Description, $Image,$Status,$currentTime);
 
     if ($sql_insert->execute()) {
         $response = array('success' => true, 'message' => 'Product successfully added to your cart!');
