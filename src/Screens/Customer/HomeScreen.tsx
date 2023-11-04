@@ -7,18 +7,20 @@ import {
   Image,
   StyleSheet,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 
 export default function HomeScreen({navigation, route}: any) {
   const details = route.params?.details || null;
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(route.params.refreshing);
   // console.log('H:Route-From: ', route);
   useEffect(() => {
     // console.log('Screen Refreshed');
-    setRefreshing(true);
+    // setRefreshing(true);
     fetchData();
-  }, []);
+  }, [data, navigation, route]);
   // }, [data]);
   const fetchData = async () => {
     // console.log('Screen Focused');
@@ -29,6 +31,11 @@ export default function HomeScreen({navigation, route}: any) {
       const result = await response.json();
       if (result.success) {
         setData(result.data);
+        setLoading(true);
+        setTimeout(() => {
+          // setData([]);
+          setLoading(false);
+        }, 2000);
       } else {
         console.error('Data fetch failed:', result.message);
       }
@@ -44,7 +51,14 @@ export default function HomeScreen({navigation, route}: any) {
   //     fetchData();
   //   }, [data]),
   // );
-  const handleImagePress = (price, image, description, productId) => {
+  const handleImagePress = (
+    price,
+    image,
+    description,
+    productId,
+    stock,
+    type,
+  ) => {
     navigation.navigate('ProductDetails', {
       path: 'Home',
       details,
@@ -52,6 +66,9 @@ export default function HomeScreen({navigation, route}: any) {
       image,
       description,
       productId,
+      stock,
+      type,
+      refreshing: true,
     });
   };
   // console.log('Home Screen:', details.userData);
@@ -59,6 +76,7 @@ export default function HomeScreen({navigation, route}: any) {
 
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <View style={styles.row}>
         <FlatList
           data={data}
@@ -67,9 +85,20 @@ export default function HomeScreen({navigation, route}: any) {
           refreshing={refreshing}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={styles.imageContainer}
+              style={
+                item.Type === 'Water'
+                  ? styles.imageContainer
+                  : styles.imageContainer1
+              }
               onPress={() =>
-                handleImagePress(item.Price, item.Image, item.Name, item.id)
+                handleImagePress(
+                  item.Price,
+                  item.Image,
+                  item.Name,
+                  item.id,
+                  item.Stock,
+                  item.Type,
+                )
               }>
               <Image
                 source={{
@@ -119,6 +148,21 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     alignItems: 'center', // Center the content
+  },
+  imageContainer1: {
+    margin: 5,
+    borderRadius: 15,
+    backgroundColor: '#AAAAAA',
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignItems: 'center',
   },
   image: {
     width: 160,

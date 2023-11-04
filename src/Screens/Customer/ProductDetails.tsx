@@ -7,9 +7,10 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
-
-export default function ProductDetails({route}: any) {
+import Icon from 'react-native-vector-icons/FontAwesome';
+export default function ProductDetails({navigation, route}: any) {
   const {
     price,
     total_price,
@@ -19,23 +20,38 @@ export default function ProductDetails({route}: any) {
     productId,
     details,
     path,
+    stock: initialStock,
+    type,
   } = route.params || {};
   const item_price = price;
   const [quantity, setQuantity] = useState(1);
   const [currentPrice, setCurrentPrice] = useState(price);
   const total_quantity = parseInt(initialTotalquant);
+  const total_stock = parseInt(initialStock);
+  const [stock, setStock] = useState(total_stock);
+  const [loading, setLoading] = useState(false);
   // const userData = JSON.parse(details.userData);
   // console.log('Not parse', details.userData.id);
+  // console.log(path, ': ', productId);
+  // console.log(type, ': ', stock);
+
   useEffect(() => {
     resetCurrentPrice();
-  }, [total_price, total_quantity]);
-  console.log(path, ': ', productId);
+    setLoading(true);
+    setTimeout(() => {
+      // setData([]);
+      setLoading(false);
+    }, 2000);
+  }, [total_price, total_quantity, total_stock, navigation, route]);
+  // console.log(details);
   const resetCurrentPrice = () => {
     setCurrentPrice(total_price || price);
     setQuantity(total_quantity || 1);
+    setStock(total_stock);
   }; //this function is declared to refresh value of Price and quantity when adding order to cart
   // console.log('PD:Route-From: ', currentPrice);
   // console.log('Total-Quantity: ', quantity);
+
   const handleAddToCart = () => {
     const InsertAPIURL =
       'https://krichsecret.000webhostapp.com/Products/Add&Edit/AddtoCart.php';
@@ -51,6 +67,8 @@ export default function ProductDetails({route}: any) {
       Total_Price: currentPrice,
       Description: description,
       Image: image,
+      Stock: stock,
+      Type: type,
     };
     console.log(Data);
     fetch(InsertAPIURL, {
@@ -136,8 +154,78 @@ export default function ProductDetails({route}: any) {
     );
   };
 
+  const handleBuyProduct = newUserId => {
+    // showConfirmation('Verify', 'Are you sure you want to verify this user?');
+    Alert.alert(
+      `Attention`,
+      'Confirm Order!',
+      [
+        {text: 'Buy', onPress: () => confirmBuy()},
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const confirmBuy = () => {
+    const InsertAPIURL =
+      'https://krichsecret.000webhostapp.com/Products/Add&Edit/PlaceOrder.php';
+    const header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+    const Data = {
+      User_id: details.userData.id,
+      Product_id: productId,
+      Quantity: quantity,
+      Price: item_price,
+      Total_Price: currentPrice,
+      Description: description,
+      Image: image,
+      Stock: stock,
+      Type: type,
+    };
+    console.log(Data);
+    fetch(InsertAPIURL, {
+      method: 'POST',
+      headers: header,
+      body: JSON.stringify(Data),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(response => {
+        if (response && response.success) {
+          Alert.alert('Attention', response.message);
+          console.log('Response: ', response);
+        } else {
+          // Handle the case where 'success' or 'message' is not present in the response
+          console.error(
+            'Invalid response format: Missing success or message property',
+          );
+        }
+      })
+      .catch(error => {
+        Alert.alert('Attention', `Network error: ${error.message}`);
+      });
+    console.log(
+      `Added ${quantity} ${description} to cart with price ₱${parseInt(
+        currentPrice,
+      ).toFixed(2)}`,
+    );
+    setQuantity(1);
+    setCurrentPrice(price);
+    // navigation.goBack('Home', {refreshing: true});
+  };
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       {price && description && quantity ? (
         <View>
           <View style={styles.productInfo}>
@@ -155,6 +243,13 @@ export default function ProductDetails({route}: any) {
             <Text style={styles.description}>
               Price: ₱{parseInt(price).toFixed(2)}
             </Text>
+            {type === 'Container' ? (
+              <Text style={[styles.textStock, {}]}>
+                Stocks Available: {stock}
+              </Text>
+            ) : (
+              ''
+            )}
             <Text style={styles.productId}>
               Total: ₱{parseInt(currentPrice).toFixed(2)}
             </Text>
@@ -179,18 +274,35 @@ export default function ProductDetails({route}: any) {
                   const totalPrice = parseInt(currentPrice) + parseInt(price);
                   setCurrentPrice(totalPrice);
                   console.log(quant);
-                }}>
+                }}
+                disabled={type === 'Container' ? quantity >= stock : false}>
                 <Text style={styles.controlButton}>+</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {path === 'Home' ? (
-            <TouchableOpacity
-              style={styles.addToCartButton}
-              onPress={handleAddToCart}>
-              <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  {width: '20%', marginRight: 10, backgroundColor: '#4682B4'},
+                ]} // Adjust width here
+                onPress={handleAddToCart}>
+                <Text style={styles.addToCartButtonText}>
+                  {' '}
+                  <Icon name="shopping-cart" size={25} color="white" />
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  {width: '80%', backgroundColor: '#2E8B57'},
+                ]} // Adjust width here
+                onPress={handleBuyProduct}>
+                <Text style={styles.addToCartButtonText}>Place Order</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <TouchableOpacity
               style={{...styles.addToCartButton, backgroundColor: '#FF0000'}}
@@ -236,6 +348,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
   },
+  textStock: {
+    marginBottom: 8,
+    fontSize: 18,
+    color: 'green',
+  },
   quantityControlContainer: {
     alignItems: 'center',
     marginTop: 20,
@@ -254,6 +371,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingHorizontal: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Adjust this based on your layout requirements
   },
   addToCartButton: {
     backgroundColor: '#70A5CD',

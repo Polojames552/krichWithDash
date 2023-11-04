@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+
 import {
   View,
   TextInput,
@@ -10,14 +11,23 @@ import {
   Alert,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 export default function AddProductScreen({navigation}) {
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
+  const [productStock, setProductStock] = useState('');
   // const [productDescription, setProductDescription] = useState('');
   const [productImage, setProductImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: 'Water', value: 'Water'},
+    {label: 'Container', value: 'Container'},
+  ]);
 
   const insertRecord = async () => {
     // alert("successful");
@@ -57,11 +67,15 @@ export default function AddProductScreen({navigation}) {
     // Check the server response for the new filename
     const newFilename = responseJson.file_name;
     console.log('New Filename:', newFilename);
-
+    {
+      value === 'Water' ? setProductStock('0') : '';
+    }
     const Data = {
       ProductName: productName,
       ProductPrice: productPrice,
       Picture: newFilename,
+      Type: value,
+      Stock: productStock,
     };
     console.log(Data);
 
@@ -147,6 +161,15 @@ export default function AddProductScreen({navigation}) {
   };
   return (
     <View style={styles.container}>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        style={styles.dropdown}
+      />
       <TextInput
         style={styles.input}
         placeholder="Product Name"
@@ -160,6 +183,17 @@ export default function AddProductScreen({navigation}) {
         value={productPrice}
         onChangeText={text => setProductPrice(text)}
       />
+      {value === 'Container' ? (
+        <TextInput
+          style={styles.input}
+          placeholder="Number of Stocks"
+          keyboardType="numeric"
+          value={productStock}
+          onChangeText={text => setProductStock(text)}
+        />
+      ) : (
+        ''
+      )}
       {/* <TextInput
         style={styles.input}
         placeholder="Product Description"
@@ -222,6 +256,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
+    marginBottom: 10,
+  },
+  dropdown: {
     marginBottom: 10,
   },
 });

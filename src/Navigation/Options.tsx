@@ -91,28 +91,30 @@ export default function Options({navigation}) {
           },
         }}>
         {() => (
-         <Drawer.Navigator
-         drawerContent={props => <CustomDrawerContent {...props} />}
-         drawerContentOption={{activeTintColor: 'blue'}}
-         initialRouteName="Home" // Set the initial route to Home
-       >
-         <Drawer.Screen
-           name="Home"
-           component={HomeScreen}
-           initialParams={{details, refreshing: true}}
-         />
-         <Drawer.Screen
-           name="MyCart"
-           component={MyCart}
-           initialParams={{details}}
-         />
-         <Drawer.Screen name="Received" component={Received}  />
-         <Drawer.Screen name="Orders" component={Orders} />
-       </Drawer.Navigator>
-       
+          <Drawer.Navigator
+            drawerContent={props => <CustomDrawerContent {...props} />}
+            drawerContentOption={{activeTintColor: 'blue'}}
+            initialRouteName="Home" // Set the initial route to Home
+          >
+            <Drawer.Screen
+              name="Home"
+              component={HomeScreen}
+              initialParams={{details, refreshing: true}}
+            />
+            <Drawer.Screen
+              name="MyCart"
+              component={MyCart}
+              initialParams={{details}}
+            />
+            <Drawer.Screen name="Received" component={Received} />
+            <Drawer.Screen name="Orders" component={Orders} />
+          </Drawer.Navigator>
         )}
       </Stack.Screen>
-      <Stack.Screen name="ProductDetails" component={ProductDetails} options={{
+      <Stack.Screen
+        name="ProductDetails"
+        component={ProductDetails}
+        options={{
           headerTitle: 'KRICH WATER REFILLING STATION',
           headerLeft: () => null,
           headerStyle: {
@@ -122,8 +124,12 @@ export default function Options({navigation}) {
             color: 'white',
             fontSize: 24,
           },
-        }} />
-      <Stack.Screen name="AccountDetails" component={AccountDetails} options={{
+        }}
+      />
+      <Stack.Screen
+        name="AccountDetails"
+        component={AccountDetails}
+        options={{
           headerTitle: 'KRICH WATER REFILLING STATION',
           headerLeft: () => null,
           headerStyle: {
@@ -133,7 +139,8 @@ export default function Options({navigation}) {
             color: 'white',
             fontSize: 24,
           },
-        }} />
+        }}
+      />
     </Stack.Navigator>
   );
 }

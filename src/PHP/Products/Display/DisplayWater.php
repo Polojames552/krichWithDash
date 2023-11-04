@@ -24,8 +24,18 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
-
     // Output data as JSON
+    //   $sql2 = "SELECT * FROM container_tbl";
+    //    $result2 = $conn->query($sql2);
+    //    if ($result2->num_rows > 0) {
+
+            // Output data of each row
+    //        while ($row1 = $result2->fetch_assoc()) {
+    //            $data[] = $row1;
+    //        }
+            
+    //    }
+    
     header('Content-Type: application/json');
     echo json_encode(array('success' => true, 'data' => $data));
 } else {

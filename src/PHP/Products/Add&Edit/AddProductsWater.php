@@ -19,11 +19,13 @@ $data = json_decode(file_get_contents("php://input"));
 $name = $data->ProductName;
 $price = $data->ProductPrice;
 $picture = $data->Picture;
+$type = $data->Type;
+$stock = $data->Stock;
 
 // Using prepared statements to prevent SQL injection
-$sql = $conn->prepare("INSERT INTO waters_tbl (Name, Price, Image) 
-                       VALUES (?, ?, ?)");
-$sql->bind_param("sis", $name, $price, $picture);
+$sql = $conn->prepare("INSERT INTO waters_tbl (Name, Price, Image,Type,Stock) 
+                       VALUES (?, ?, ?,?,?)");
+$sql->bind_param("sissi", $name, $price, $picture,$type,$stock);
 
 if ($sql->execute()) {
     $response = array('success' => true, 'message' => 'Product added Successfully');
