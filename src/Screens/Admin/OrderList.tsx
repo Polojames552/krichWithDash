@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const OrderItem = ({ order, showButtons, handleAccept, handleDecline }) => {
+const OrderItem = ({ order, showButtons, handleAccept, handleDecline, showDoneButton, handleDone }) => {
   return (
     <View style={styles.orderContainer}>
       <Image source={order.image} style={styles.image} />
@@ -20,6 +20,11 @@ const OrderItem = ({ order, showButtons, handleAccept, handleDecline }) => {
             <Text style={styles.buttonText}>Decline</Text>
           </TouchableOpacity>
         </View>
+      )}
+      {showDoneButton &&(
+         <TouchableOpacity style={styles.button} onPress={() => handleDone(order.id)}>
+         <Text style={styles.buttonText}>Done</Text>
+       </TouchableOpacity>
       )}
     </View>
   );
@@ -81,10 +86,10 @@ const CompletedOrdersScreen = () => {
   );
 };
 
-const CancelledOrdersScreen = () => {
+const ToDeliverScreen = () => {
   const cancelledOrders = [
-    { id: 1, image: require('../../Assets/Images/slim.jpg'), description: 'Cancelled Order 1 Description', customer: { name: 'Jack Red', address: '111 Elm Ln' } },
-    { id: 2, image: require('../../Assets/Images/slim.jpg'), description: 'Cancelled Order 2 Description', customer: { name: 'Jenny Blue', address: '222 Maple Dr' } },
+    { id: 1, image: require('../../Assets/Images/slim.jpg'), description: 'To Deliver 1 Description', customer: { name: 'Jack Red', address: '111 Elm Ln' } },
+    { id: 2, image: require('../../Assets/Images/slim.jpg'), description: 'To Deliver 2 Description', customer: { name: 'Jenny Blue', address: '222 Maple Dr' } },
     
   ];
 
@@ -96,7 +101,7 @@ const CancelledOrdersScreen = () => {
         renderItem={({ item }) => (
           <OrderItem
             order={item}
-            showButtons={false} 
+            showDoneButton={true} 
           />
         )}
       />
@@ -118,8 +123,8 @@ const OrderList = () => {
               iconName = "plus-circle";
             } else if (route.name === "Completed Orders") {
               iconName = "check-circle";
-            } else if (route.name === "Cancelled Orders") {
-              iconName = "times-circle";
+            } else if (route.name === "To Deliver") {
+              iconName = "truck";
             }
 
             return <FontAwesome5 name={iconName} size={size} color={color} />;
@@ -131,8 +136,9 @@ const OrderList = () => {
         }}
       >
         <Tab.Screen name="New Orders" component={NewOrdersScreen} />
+        <Tab.Screen name="To Deliver" component={ToDeliverScreen} />
         <Tab.Screen name="Completed Orders" component={CompletedOrdersScreen} />
-        <Tab.Screen name="Cancelled Orders" component={CancelledOrdersScreen} />
+        
       </Tab.Navigator>
    
   );
