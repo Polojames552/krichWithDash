@@ -20,37 +20,33 @@ export default function HomeScreen({navigation, route}: any) {
     // console.log('Screen Refreshed');
     // setRefreshing(true);
     fetchData();
-  }, [data, navigation, route]);
-  // }, [data]);
+  }, []);
+  // }, [data, navigation, route]);
   const fetchData = async () => {
     // console.log('Screen Focused');
-    try {
-      const response = await fetch(
-        'https://krichsecret.000webhostapp.com/Products/Display/DisplayWater.php',
-      );
-      const result = await response.json();
-      if (result.success) {
-        setData(result.data);
-        setLoading(true);
-        setTimeout(() => {
-          // setData([]);
-          setLoading(false);
-        }, 2000);
-      } else {
-        console.error('Data fetch failed:', result.message);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
+    // try {
+    const response = await fetch(
+      'https://krichwater2023.000webhostapp.com/Products/Display/DisplayWater.php',
+    );
+    const result = await response.json();
+    if (result.success) {
+      setData(result.data);
+      setLoading(true);
+      setTimeout(() => {
+        // setData([]);
+        setLoading(false);
+      }, 2000);
     }
+    //   else {
+    //     console.error('Data fetch failed:', result.message);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching data:', error.message);
+    // }
     // finally {
     //   setLoading(false);
     // }
   };
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     fetchData();
-  //   }, [data]),
-  // );
   const handleImagePress = (
     price,
     image,
@@ -76,19 +72,25 @@ export default function HomeScreen({navigation, route}: any) {
 
   return (
     <View style={styles.container}>
-      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
+      {/* {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''} */}
       <View style={styles.row}>
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
           refreshing={refreshing}
+          ListEmptyComponent={() => (
+            <Text style={{textAlign: 'center', marginTop: 20}}>
+              No data available.
+            </Text>
+          )}
           renderItem={({item}) => (
             <TouchableOpacity
               style={
-                item.Type === 'Water'
-                  ? styles.imageContainer
-                  : styles.imageContainer1
+                styles.imageContainer
+                // item.Type === 'Water'
+                //   ? styles.imageContainer
+                //   : styles.imageContainer1
               }
               onPress={() =>
                 handleImagePress(
@@ -103,15 +105,25 @@ export default function HomeScreen({navigation, route}: any) {
               <Image
                 source={{
                   uri:
-                    'https://krichsecret.000webhostapp.com/Products/Image/' +
+                    'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
                     item.Image,
                 }}
                 style={styles.image}
               />
               <View style={styles.textContainer}>
+                {item.Type === 'Container' ? (
+                  <Text style={[styles.price, {color: 'red'}]}>
+                    Stocks: {item.Type}
+                  </Text>
+                ) : (
+                  <Text style={[styles.price, {color: 'blue'}]}>
+                    Stocks: {item.Type}
+                  </Text>
+                )}
+
                 <Text style={styles.description}>{item.Name}</Text>
                 <Text style={styles.price}>
-                  Php {parseInt(item.Price).toFixed(2)}
+                  ₱ {parseInt(item.Price).toFixed(2)}
                 </Text>
               </View>
             </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,19 +11,19 @@ import {
   ActivityIndicator,
   Modal, // Added import for Modal
   ScrollView, // Added import for ScrollView
-} from "react-native";
+} from 'react-native';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL =
-  "https://krichsecret.000webhostapp.com/Authentication/Login.php";
+  'https://krichwater2023.000webhostapp.com/Authentication/Login.php';
 
-const LoginScreen = ({ navigation }: any) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState("false");
+const LoginScreen = ({navigation}: any) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState('false');
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -33,73 +33,73 @@ const LoginScreen = ({ navigation }: any) => {
 
   const checkAuthentication = async () => {
     try {
-      const token = await AsyncStorage.getItem("authToken");
-      const userDataString = await AsyncStorage.getItem("user");
+      const token = await AsyncStorage.getItem('authToken');
+      const userDataString = await AsyncStorage.getItem('user');
 
       if (token) {
         const userData = JSON.parse(userDataString);
         const role = userData.Role;
 
-        if (role === "Admin") {
-          navigation.replace("AdminOptions", { userData });
-        } else if (role === "User") {
-          navigation.replace("Options", { userData });
+        if (role === 'Admin') {
+          navigation.replace('AdminOptions', {userData});
+        } else if (role === 'User') {
+          navigation.replace('Options', {userData});
         } else {
           // Handle other roles if needed
         }
       }
     } catch (error) {
-      console.error("Error checking authentication:", error);
+      console.error('Error checking authentication:', error);
     }
   };
 
   const checkLogin = async () => {
-    const isLoggedIn = await AsyncStorage.getItem("login");
-    if (isLoggedIn === "true") {
-      setIsLoggedIn("true");
+    const isLoggedIn = await AsyncStorage.getItem('login');
+    if (isLoggedIn === 'true') {
+      setIsLoggedIn('true');
     }
   };
 
   const handleLogin = async () => {
     try {
       const response = await fetch(API_URL, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: `username=${username}&password=${password}`,
       });
       const data = await response.json();
       if (data.success) {
-        Alert.alert("Success", data.message);
-        const { token, user } = data;
-        await AsyncStorage.setItem("authToken", token);
-        await AsyncStorage.setItem("user", JSON.stringify(user));
-        await AsyncStorage.setItem("login", "true");
+        Alert.alert('Success', data.message);
+        const {token, user} = data;
+        await AsyncStorage.setItem('authToken', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+        await AsyncStorage.setItem('login', 'true');
 
         const userData = JSON.parse(JSON.stringify(user));
 
         const role = userData.Role;
 
-        if (role === "Admin") {
-          navigation.replace("AdminOptions", { userData });
-        } else if (role === "User") {
-          navigation.replace("Options", { userData });
+        if (role === 'Admin') {
+          navigation.replace('AdminOptions', {userData});
+        } else if (role === 'User') {
+          navigation.replace('Options', {userData});
         } else {
           // Handle other roles if needed
         }
       } else {
-        Alert.alert("Error", data.message);
-        setPassword("");
+        Alert.alert('Error', data.message);
+        setPassword('');
       }
     } catch (error) {
-      console.error("Error:", error);
-      Alert.alert("Error", "An error occurred");
+      console.error('Error:', error);
+      Alert.alert('Error', 'An error occurred');
     }
   };
 
   const handleSignup = () => {
-    navigation.navigate("SignUp");
+    navigation.navigate('SignUp');
   };
 
   const handleAboutClick = () => {
@@ -112,10 +112,9 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
     <ImageBackground
-      source={require("../../Assets/Images/bg_main.png")}
-      style={styles.backgroundImage}
-    >
-      {isLoggedIn === "false" ? (
+      source={require('../../Assets/Images/bg_main.png')}
+      style={styles.backgroundImage}>
+      {isLoggedIn === 'false' ? (
         <View style={styles.container}>
           <View style={styles.loginContainer}>
             <View style={styles.titleContainer}>
@@ -124,9 +123,9 @@ const LoginScreen = ({ navigation }: any) => {
             <TextInput
               style={styles.input}
               placeholder="Username"
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setUsername(text);
-                setUsernameError("");
+                setUsernameError('');
               }}
               value={username}
             />
@@ -137,9 +136,9 @@ const LoginScreen = ({ navigation }: any) => {
               style={styles.input}
               placeholder="Password"
               secureTextEntry
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setPassword(text);
-                setPasswordError("");
+                setPasswordError('');
               }}
               value={password}
             />
@@ -147,17 +146,15 @@ const LoginScreen = ({ navigation }: any) => {
               <Text style={styles.errorText}>{passwordError}</Text>
             ) : null}
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: "#4A78D3" }]}
-              onPress={handleLogin}
-            >
+              style={[styles.button, {backgroundColor: '#4A78D3'}]}
+              onPress={handleLogin}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
             <Text style={styles.signupText}>Don't have an account yet?</Text>
             <TouchableOpacity
               style={[styles.button, styles.signupButton]}
-              onPress={handleSignup}
-            >
+              onPress={handleSignup}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
 
@@ -174,8 +171,7 @@ const LoginScreen = ({ navigation }: any) => {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={closeModal}
-      >
+        onRequestClose={closeModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <ScrollView>
@@ -274,35 +270,35 @@ const LoginScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   backgroundImage: {
     flex: 1,
-    resizeMode: "cover", // or "stretch" or whatever suits your design
-    justifyContent: "center",
+    resizeMode: 'cover', // or "stretch" or whatever suits your design
+    justifyContent: 'center',
   },
   titleContainer: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     marginLeft: 20,
     marginBottom: 20,
     paddingBottom: 15,
-    paddingRight: "60%",
+    paddingRight: '60%',
     borderBottomWidth: 2,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   loginContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    padding: "5%",
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: '5%',
     borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
+    width: '80%',
+    alignItems: 'center',
   },
   input: {
-    width: "100%",
+    width: '100%',
     height: 40,
     borderWidth: 1,
     borderRadius: 5,
@@ -311,50 +307,50 @@ const styles = StyleSheet.create({
   },
   signupContainer: {
     marginTop: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
   signupText: {
     fontSize: 16,
     marginBottom: 10,
   },
   button: {
-    width: "100%",
+    width: '100%',
     paddingVertical: 10,
     borderRadius: 5,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
   },
   errorText: {
-    color: "red",
+    color: 'red',
     marginTop: 10,
   },
   signupButton: {
-    backgroundColor: "#4A78D3",
+    backgroundColor: '#4A78D3',
   },
   aboutButton: {
-    backgroundColor: "#4A78D3",
+    backgroundColor: '#4A78D3',
     marginTop: 10,
   },
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     elevation: 5,
-    maxHeight: "80%", // Adjust as needed
-    width: "90%", // Adjust as needed
+    maxHeight: '80%', // Adjust as needed
+    width: '90%', // Adjust as needed
   },
   modalText: {
     fontSize: 16,
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   aboutUsText: {
     fontSize: 16,
@@ -362,7 +358,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     fontSize: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   aboutLink: {
     color: '#4A78D3',

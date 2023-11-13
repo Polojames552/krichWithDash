@@ -8,9 +8,7 @@ $dbname = "id21391162_secretkrich_db";
 $conn = new mysqli($servername, $db_username, $db_password, $dbname);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+
 
 // Retrieve data from the request
 $data = json_decode(file_get_contents("php://input"));

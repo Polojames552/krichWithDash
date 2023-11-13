@@ -6,56 +6,139 @@ import {
   FlatList,
   Image,
   StyleSheet,
+  Alert,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Products = ({navigation}) => {
-  const [data, setData] = useState();
+const Products = ({navigation, route}) => {
+  const [data, setData] = useState([]);
   useEffect(() => {
     // console.log('Screen Refreshed');
-
     fetchData();
-  }, [data]);
+  }, [data, navigation, route]);
   const fetchData = async () => {
     // console.log('Screen Focused');
-    try {
-      const response = await fetch(
-        'https://krichsecret.000webhostapp.com/Products/Display/DisplayWater.php',
-      );
-      const result = await response.json();
-      if (result.success) {
-        setData(result.data);
-      } else {
-        console.error('Data fetch failed:', result.message);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
+    // try {
+    const response = await fetch(
+      'https://krichwater2023.000webhostapp.com/Products/Display/DisplayWater.php',
+    );
+    const result = await response.json();
+    if (result.success) {
+      setData([...result.data]);
     }
+    //   else {
+    //     console.error('Data fetch failed:', result.message);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching data:', error.message);
+    // }
     // finally {
     //   setLoading(false);
     // }
   };
-  const handleProductPress = (Price, imageUrl, Name) => {
-    navigation.navigate('EditProducts', {Price, imageUrl, Name});
+  const handleProductPress = (id, Price, imageUrl, Name, Type, Stock) => {
+    navigation.navigate('EditProducts', {
+      id,
+      Price,
+      imageUrl,
+      Name,
+      Type,
+      Stock,
+    });
   };
   const handleAddProductPress = () => {
     navigation.navigate('AddProducts');
   };
+  const handleDeleteItem = async (id, product_id) => {
+    const InsertAPIURL =
+      'https://krichwater2023.000webhostapp.com/Products/Delete/DeleteProduct.php';
+    const header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+    const Data = {
+      Item_id: id,
+      Item_prod_id: product_id,
+    };
+    try {
+      const response = await fetch(InsertAPIURL, {
+        method: 'POST',
+        headers: header,
+        body: JSON.stringify(Data),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        // Update the products state to remove selected items
+        setData([]);
+        Alert.alert('Attention', responseData.message);
+        console.log('Response Data:', responseData);
+      } else {
+        console.error(
+          'Invalid response format: Missing success or message property',
+        );
+      }
+    } catch (error) {
+      Alert.alert('Attention', `Network error: ${error.message}`);
+    }
+  };
+
   const renderProductItem = ({item}) => {
     return (
       <TouchableOpacity
         style={styles.productContainer}
-        onPress={() => handleProductPress(item.Price, item.Image, item.Name)}>
+        onPress={() =>
+          handleProductPress(
+            item.id,
+            item.Price,
+            item.Image,
+            item.Name,
+            item.Type,
+            item.Stock,
+          )
+        }>
         <Image
           source={{
             uri:
-              'https://krichsecret.000webhostapp.com/Products/Image/' +
+              'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
               item.Image,
           }}
           style={styles.productImage}
         />
         <View style={styles.productDetails}>
           <Text style={styles.productDescription}>{item.Name}</Text>
-          <Text style={styles.productPrice}>Php {item.Price}</Text>
+          <Text style={styles.productPrice}>₱{item.Price}</Text>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() =>
+              Alert.alert(
+                `Attention`,
+                'Do you want to delete this product?',
+                [
+                  {
+                    text: 'Delete',
+                    onPress: () => handleDeleteItem(item.id, item.Product_id),
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                ],
+                {cancelable: true},
+              )
+            }>
+            <Icon name="trash" size={25} color="#B22222" />
+          </TouchableOpacity>
+          {/* {item.Type === 'Container' ? (
+            <Text style={[styles.productPrice, {color: 'green'}]}>
+              Stocks: {item.Stock}
+            </Text>
+          ) : (
+            ''
+          )} */}
         </View>
       </TouchableOpacity>
     );
@@ -64,7 +147,7 @@ const Products = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.containerHeading}>
-        <Text style={styles.heading}>Water</Text>
+        <Text style={styles.heading}>List of Products</Text>
       </View>
       <FlatList
         data={data}
@@ -173,6 +256,9 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 14,
     color: '#007BFF',
+  },
+  deleteButton: {
+    marginLeft: 'auto',
   },
 });
 

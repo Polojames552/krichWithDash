@@ -40,7 +40,7 @@ const RegistrationScreen = ({navigation}) => {
   const [number, setNumber] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
   const [passwordError, setPasswordError] = useState('');
-
+  const [nFile, setNFile] = useState('');
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
   const openGallery = async () => {
@@ -126,15 +126,16 @@ const RegistrationScreen = ({navigation}) => {
       // alert("successful");
       // const baseUrl = "http://krichwater.infinityfreeapp.com/";
       // const InsertAPIURL = baseUrl+"query/RegisterUser.php";
+
       const InsertAPIURL =
-        'https://krichsecret.000webhostapp.com/Authentication/Register.php';
+        'https://krichwater2023.000webhostapp.com/Authentication/Register.php';
       const header = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       };
 
       let base_url =
-        'https://krichsecret.000webhostapp.com/Authentication/RegisterUploadImage.php';
+        'https://krichwater2023.000webhostapp.com/Authentication/RegisterUploadImage.php';
       const formdata = new FormData();
       formdata.append('submit', 'ok');
       formdata.append('file', {
@@ -153,12 +154,14 @@ const RegistrationScreen = ({navigation}) => {
       });
 
       if (!res.ok) {
+        console.error('Server returned an error:', res.status, res.statusText);
+        const responseText = await res.text();
+        console.error('Response:', responseText);
         throw new Error('Server returned an error');
       }
 
       let responseJson = await res.json();
-      console.log(responseJson, 'responseJson');
-      // Check the server response for the new filename
+      console.log('Response', responseJson.success);
       const newFilename = responseJson.file_name;
       console.log('New Filename:', newFilename);
 

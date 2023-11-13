@@ -15,9 +15,16 @@ if ($conn->connect_error) {
 // Retrieve data from the request
 $data = json_decode(file_get_contents("php://input"));
 
+date_default_timezone_set('Asia/Manila');
+$formattedTime = new DateTime();
+$formattedTime->setTimezone(new DateTimeZone('Asia/Manila')); // Adjust to Philippine time
+$currentTime = $formattedTime->format('Y-m-d H:i:s');
+
 // Assign values to variables
 $User_id = $data->User_id;
 $Product_id = $data->Product_id;
+$User_name = $data->User_Name;
+$User_address = $data->User_Address;
 $Quantity = $data->Quantity;
 $Price = $data->Price;
 $Total_Price = $data->Total_Price;
@@ -25,7 +32,7 @@ $Description = $data->Description;
 $Image = $data->Image;
 $Stock = $data->Stock;
 $Type = $data->Type;
-$currentTime = date("Y-m-d H:i:s");
+//$currentTime = date("Y-m-d H:i:s");
 $pstatus = "Pending";
 $find = "SELECT * FROM cart_tbl WHERE User_id=? AND Product_id=? AND Status=?";
 $stmt = $conn->prepare($find);
@@ -68,9 +75,9 @@ if ($result->num_rows > 0){
     }else{
         $fStock =  0;
     }
-    $sql_insert = $conn->prepare("INSERT INTO cart_tbl (User_id, Product_id, Quantity, Price, Total_Price, Description, Image,Status,time_updated,Type, Stock) 
-                                   VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?)");
-    $sql_insert->bind_param("iiiiisssssi", $User_id, $Product_id, $Quantity, $Price, $Total_Price, $Description, $Image,$Status,$currentTime,$Type,$fStock);
+    $sql_insert = $conn->prepare("INSERT INTO cart_tbl (User_id, Product_id, Name, Address, Quantity, Price, Total_Price, Description, Image,Status,time_updated,Type, Stock) 
+                                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?)");
+    $sql_insert->bind_param("iissiiisssssi", $User_id, $Product_id, $User_name, $User_address, $Quantity, $Price, $Total_Price, $Description, $Image,$Status,$currentTime,$Type,$fStock);
     
     if ($sql_insert->execute()) {
         $response = array('success' => true, 'message' => 'Product successfully added to your cart!');

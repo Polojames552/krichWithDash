@@ -82,7 +82,7 @@ const Dashboard = ({navigation}) => {
 
   const performAction = newUserId => {
     const InsertAPIURL =
-      'https://krichsecret.000webhostapp.com/Authentication/VerifyUser.php';
+      'https://krichwater2023.000webhostapp.com/Authentication/VerifyUser.php';
     const header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -185,20 +185,21 @@ const Dashboard = ({navigation}) => {
   }, []);
 
   const fetchData = async () => {
-    try {
-      const response = await fetch(
-        'https://krichsecret.000webhostapp.com/Authentication/DisplayUsers.php',
-      );
-      const result = await response.json();
-      // console.log(result.message);
-      if (result.success) {
-        setData(result.data);
-      } else {
-        console.error('Data fetch failed:', result.message);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
+    // try {
+    const response = await fetch(
+      'https://krichwater2023.000webhostapp.com/Authentication/DisplayUsers.php',
+    );
+    const result = await response.json();
+    // console.log(result.message);
+    if (result.success) {
+      setData(result.data);
     }
+    //   else {
+    //     console.error('Data fetch failed:', result.message);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching data:', error.message);
+    // }
   };
 
   return (

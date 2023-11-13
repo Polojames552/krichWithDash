@@ -37,12 +37,12 @@ export default function ProductDetails({navigation, route}: any) {
 
   useEffect(() => {
     resetCurrentPrice();
-    setLoading(true);
-    setTimeout(() => {
-      // setData([]);
-      setLoading(false);
-    }, 2000);
-  }, [total_price, total_quantity, total_stock, navigation, route]);
+    // setLoading(true);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 2000);
+  }, []);
+  // }, [total_price, total_quantity, total_stock, navigation, route]);
   // console.log(details);
   const resetCurrentPrice = () => {
     setCurrentPrice(total_price || price);
@@ -62,6 +62,8 @@ export default function ProductDetails({navigation, route}: any) {
     const Data = {
       User_id: details.userData.id,
       Product_id: productId,
+      User_Name: details.userData.Fname + ' ' + details.userData.Lname,
+      User_Address: details.userData.Address,
       Quantity: quantity,
       Price: item_price,
       Total_Price: currentPrice,
@@ -181,6 +183,8 @@ export default function ProductDetails({navigation, route}: any) {
       User_id: details.userData.id,
       Product_id: productId,
       Quantity: quantity,
+      User_Name: details.userData.Fname + ' ' + details.userData.Lname,
+      User_Address: details.userData.Address,
       Price: item_price,
       Total_Price: currentPrice,
       Description: description,
@@ -233,7 +237,7 @@ export default function ProductDetails({navigation, route}: any) {
               <Image
                 source={{
                   uri:
-                    'https://krichsecret.000webhostapp.com/Products/Image/' +
+                    'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
                     image,
                 }}
                 style={styles.image}

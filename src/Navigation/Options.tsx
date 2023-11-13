@@ -38,19 +38,20 @@ function CustomDrawerContent({navigation}) {
         )}
         onPress={() => navigation.navigate('MyCart', {refreshing: true})}
       />
+
+      <DrawerItem
+        label="My Orders"
+        icon={({color, size}) => (
+          <FontAwesome5 name="clipboard-list" size={size} color={color} />
+        )}
+        onPress={() => navigation.navigate('Orders', {refreshing: true})}
+      />
       <DrawerItem
         label="Received"
         icon={({color, size}) => (
           <FontAwesome5 name="box" size={size} color={color} />
         )}
-        onPress={() => navigation.navigate('Received')}
-      />
-      <DrawerItem
-        label="Orders"
-        icon={({color, size}) => (
-          <FontAwesome5 name="clipboard-list" size={size} color={color} />
-        )}
-        onPress={() => navigation.navigate('Orders')}
+        onPress={() => navigation.navigate('Received', {refreshing: true})}
       />
 
       {navigation.isFocused() && (
@@ -106,8 +107,16 @@ export default function Options({navigation}) {
               component={MyCart}
               initialParams={{details}}
             />
-            <Drawer.Screen name="Received" component={Received} />
-            <Drawer.Screen name="Orders" component={Orders} />
+            <Drawer.Screen
+              name="Orders"
+              initialParams={{details}}
+              component={Orders}
+            />
+            <Drawer.Screen
+              name="Received"
+              initialParams={{details}}
+              component={Received}
+            />
           </Drawer.Navigator>
         )}
       </Stack.Screen>

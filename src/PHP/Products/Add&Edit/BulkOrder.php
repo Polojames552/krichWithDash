@@ -1,11 +1,17 @@
 <?php
+
 $servername = "localhost";
 $username = "id21391162_secretkrich";
 $password = "@Mysecret_db21";
 $dbname = "id21391162_secretkrich_db";
-
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
+
+
+$servername1 = "localhost";
+$username1 = "id21528199_krich123";
+$password1 = "@Krich_123";
+$dbname1 = "id21528199_krichwater_db";
+$conn1 = new mysqli($servername1, $username1, $password1, $dbname1);
 
 // Check connection
 if ($conn->connect_error) {
@@ -38,42 +44,42 @@ $result = $stmt->get_result();
         $product_id = $data['Product_id'];
         
         if ($type === "Container") {
-            $findWaters = "SELECT * FROM waters_tbl WHERE id=?";
-            $stmtWaters = $conn->prepare($findWaters);
-            $stmtWaters->bind_param("i", $product_id);
-            $stmtWaters->execute();
-            $resultWaters = $stmtWaters->get_result();
+            // $findWaters = "SELECT * FROM waters_tbl WHERE id=?";
+            // $stmtWaters = $conn1->prepare($findWaters);
+            // $stmtWaters->bind_param("i", $product_id);
+            // $stmtWaters->execute();
+            // $resultWaters = $stmtWaters->get_result();
         
-            if ($resultWaters->num_rows > 0) {
-                $dataWaters = $resultWaters->fetch_assoc();
-                $remainingStock = $dataWaters['Stock'];
+            // if ($resultWaters->num_rows > 0) {
+            //     $dataWaters = $resultWaters->fetch_assoc();
+            //     $remainingStock = $dataWaters['Stock'];
         
-                if ($remainingStock > 0) {
-                    $fStock = $remainingStock - $quantity;
+            //     if ($remainingStock > 0) {
+            //         $fStock = $remainingStock - $quantity;
         
                     $sqlUpdateCart = "UPDATE cart_tbl SET Status = ? WHERE id = ?";
                     $stmtUpdateCart = $conn->prepare($sqlUpdateCart);
-                    $setstatus = "Delivering";
+                    $setstatus = "For Approval";
                     $stmtUpdateCart->bind_param("si", $setstatus, $id);
                     $stmtUpdateCart->execute();
                     $stmtUpdateCart->close();
         
-                    $sqlUpdateWaters = "UPDATE waters_tbl SET Stock = ? WHERE id = ?";
-                    $stmtUpdateWaters = $conn->prepare($sqlUpdateWaters);
-                    $stmtUpdateWaters->bind_param("ii", $fStock, $product_id);
-                    $stmtUpdateWaters->execute();
-                    $stmtUpdateWaters->close();
+                    // $sqlUpdateWaters = "UPDATE waters_tbl SET Stock = ? WHERE id = ?";
+                    // $stmtUpdateWaters = $conn1->prepare($sqlUpdateWaters);
+                    // $stmtUpdateWaters->bind_param("ii", $fStock, $product_id);
+                    // $stmtUpdateWaters->execute();
+                    // $stmtUpdateWaters->close();
         
                    // $response = array('success' => true, 'message' => 'Product ordered successfully!');
                     //    echo json_encode($response);
                     $num++;
-                }
-            }
+            //     }
+            // }
         }
         else{
             $sqlcartwaters = "UPDATE cart_tbl SET Status = ? WHERE id = ?";
             $stmt_update_waters = $conn->prepare($sqlcartwaters);
-            $setstatus = "Delivering";
+            $setstatus = "For Approval";
             $stmt_update_waters->bind_param("si", $setstatus, $id);
        
             if ($stmt_update_waters->execute()) {
@@ -100,4 +106,5 @@ if($num == $length){
 
 // Close the connection
 $conn->close();
+$conn1->close();
 ?>

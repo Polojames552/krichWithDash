@@ -205,7 +205,7 @@ export default function MyCart({navigation, route}) {
       <Image
         source={{
           uri:
-            'https://krichsecret.000webhostapp.com/Products/Image/' +
+            'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
             item.Image,
         }}
         style={styles.productImage}
@@ -238,9 +238,46 @@ export default function MyCart({navigation, route}) {
       </TouchableOpacity>
     </TouchableOpacity>
   );
-  const handleDeleteItem = id => {
-    Alert.alert('You deleted item', id);
+  const handleDeleteItem = async id => {
+    const InsertAPIURL =
+      'https://krichsecret.000webhostapp.com/Products/Delete/DeleteMyCartItem.php';
+    const header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+    const Data = {
+      Item_id: id,
+    };
+    try {
+      const response = await fetch(InsertAPIURL, {
+        method: 'POST',
+        headers: header,
+        body: JSON.stringify(Data),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const responseData = await response.json();
+
+      if (responseData.success) {
+        // Update the products state to remove selected items
+        setProducts([]);
+        setAllId([]);
+        // Trigger a re-render by updating refreshFlag
+        setRefreshFlag(prev => !prev);
+        setSelectAll(false);
+        Alert.alert('Attention', responseData.message);
+        console.log('Response Data:', responseData);
+      } else {
+        console.error(
+          'Invalid response format: Missing success or message property',
+        );
+      }
+    } catch (error) {
+      Alert.alert('Attention', `Network error: ${error.message}`);
+    }
   };
+
   const handleBuyProductConfirmation = () => {
     // showConfirmation('Verify', 'Are you sure you want to verify this user?');
     Alert.alert(
@@ -282,13 +319,10 @@ export default function MyCart({navigation, route}) {
         setProducts(prevProducts =>
           prevProducts.filter(product => !selectedItems.includes(product.id)),
         );
-        // Clear other state variables
-        setTotalP(0);
-        setAllId([]);
-        // Trigger a re-render by updating refreshFlag
         setRefreshFlag(prev => !prev);
-        setSelectAll(false);
+        setAllId([]);
         setSelectedItems([]);
+        setTotalP(0);
         Alert.alert('Attention', responseData.message);
         console.log('Response Data:', responseData);
       } else {

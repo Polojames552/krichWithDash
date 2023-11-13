@@ -66,7 +66,7 @@ const UserDetails = ({navigation, route}) => {
         <Image
           source={{
             uri:
-              'https://krichsecret.000webhostapp.com/Authentication/ImageRegister/' +
+              'https://krichwater2023.000webhostapp.com/Authentication/ImageRegister/' +
               userData.image,
           }}
           style={styles.profileImage}
@@ -92,12 +92,12 @@ const UserDetails = ({navigation, route}) => {
           </View>
         ))}
       </View>
-
+      {/* 
       <TouchableOpacity
         onPress={isEditing ? handleSavePress : handleEditPress}
         style={styles.editButton}>
         <Text style={styles.editButtonText}>{isEditing ? 'Save' : 'Edit'}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </ScrollView>
   );
 };

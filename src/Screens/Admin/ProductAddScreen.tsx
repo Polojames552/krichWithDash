@@ -17,13 +17,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 export default function AddProductScreen({navigation}) {
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
-  const [productStock, setProductStock] = useState('');
+  const [productStock, setProductStock] = useState(0);
   // const [productDescription, setProductDescription] = useState('');
   const [productImage, setProductImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [typeValue, setTypeValue] = useState(null);
   const [items, setItems] = useState([
     {label: 'Water', value: 'Water'},
     {label: 'Container', value: 'Container'},
@@ -33,14 +33,16 @@ export default function AddProductScreen({navigation}) {
     // alert("successful");
     // const baseUrl = "http://krichwater.infinityfreeapp.com/";
     // const InsertAPIURL = baseUrl+"query/RegisterUser.php";
+
     const InsertAPIURL =
-      'https://krichsecret.000webhostapp.com/Products/Add&Edit/AddProductsWater.php';
+      'https://krichwater2023.000webhostapp.com/Products/Add&Edit/AddProductsWater.php';
     const header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
+
     let base_url =
-      'https://krichsecret.000webhostapp.com/Products/Add&Edit/AddProductsWaterImage.php';
+      'https://krichwater2023.000webhostapp.com/Products/Add&Edit/AddProductsWaterImage.php';
     const formdata = new FormData();
     formdata.append('submit', 'ok');
     formdata.append('file', {
@@ -68,17 +70,17 @@ export default function AddProductScreen({navigation}) {
     const newFilename = responseJson.file_name;
     console.log('New Filename:', newFilename);
     {
-      value === 'Water' ? setProductStock('0') : '';
+      typeValue === 'Water' ? setProductStock(0) : '';
     }
+
     const Data = {
       ProductName: productName,
-      ProductPrice: productPrice,
+      ProductPrice: parseInt(productPrice),
       Picture: newFilename,
-      Type: value,
+      Type: typeValue,
       Stock: productStock,
     };
     console.log(Data);
-
     fetch(InsertAPIURL, {
       method: 'POST',
       headers: header,
@@ -104,6 +106,7 @@ export default function AddProductScreen({navigation}) {
       .catch(error => {
         Alert.alert('Attention', `Network error: ${error.message}`);
       });
+    setProductStock(0);
     setProductName('');
     setProductPrice('');
     setSelectedImage('');
@@ -163,10 +166,10 @@ export default function AddProductScreen({navigation}) {
     <View style={styles.container}>
       <DropDownPicker
         open={open}
-        value={value}
+        value={typeValue}
         items={items}
         setOpen={setOpen}
-        setValue={setValue}
+        setValue={setTypeValue}
         setItems={setItems}
         style={styles.dropdown}
       />
@@ -183,12 +186,12 @@ export default function AddProductScreen({navigation}) {
         value={productPrice}
         onChangeText={text => setProductPrice(text)}
       />
-      {value === 'Container' ? (
+      {typeValue === 'Container' ? (
         <TextInput
           style={styles.input}
           placeholder="Number of Stocks"
           keyboardType="numeric"
-          value={productStock}
+          value={productStock.toString()}
           onChangeText={text => setProductStock(text)}
         />
       ) : (

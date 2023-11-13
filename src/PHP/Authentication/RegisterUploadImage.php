@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => 'File upload error: ' . $_FILES['file']['error'],
             );
         } else {
-            $targetDirectory = '/storage/ssd3/162/21391162/public_html/Authentication/ImageRegister/';
+            $targetDirectory = 'ImageRegister/';
             $targetFile = $targetDirectory . basename($_FILES['file']['name']);
             $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
@@ -59,5 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 }
 
+// Output the JSON response
 echo json_encode($response);
 ?>
