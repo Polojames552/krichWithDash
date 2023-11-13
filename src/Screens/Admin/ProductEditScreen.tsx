@@ -1,7 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Image, Alert} from 'react-native';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  Alert,
+  Text,
+} from 'react-native';
 
-const ProductEditScreen = ({route}) => {
+const ProductEditScreen = ({route, navigation}) => {
   const {id, Price, imageUrl, Name, Type, Stock} = route.params || {};
 
   const [editedPrice, setEditedPrice] = useState(Price);
@@ -47,7 +55,7 @@ const ProductEditScreen = ({route}) => {
     // console.log('Stock', editedStock);
 
     const InsertAPIURL =
-      'https://krichsecret.000webhostapp.com/Products/Add&Edit/EditProductAdmin.php';
+      'https://krichwater2023.000webhostapp.com/Products/Add&Edit/EditProductAdmin.php';
     const header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -72,8 +80,15 @@ const ProductEditScreen = ({route}) => {
       })
       .then(response => {
         if (response && response.success) {
-          Alert.alert('Attention', response.message);
-          console.log('Response: ', response);
+          // Alert.alert('Attention', response.message);
+          // console.log('Response: ', response);
+          Alert.alert(`Attention`, response.message, [
+            {
+              text: 'Done',
+              onPress: () =>
+                navigation.navigate('Products', {refreshing: true}),
+            },
+          ]);
         } else {
           // Handle the case where 'success' or 'message' is not present in the response
           console.error(
@@ -87,14 +102,38 @@ const ProductEditScreen = ({route}) => {
   };
   return (
     <View style={styles.container}>
+      <Text
+        style={{
+          fontWeight: 'bold',
+          color: '#2E8B57',
+          fontSize: 25,
+          paddingBottom: 15,
+        }}>
+        Edit Product Details
+      </Text>
       <Image
         source={{
           uri:
             'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
             imageUrl,
         }}
-        style={styles.image}
+        style={[
+          styles.image,
+          {resizeMode: 'stretch', height: '25%', width: '40%'},
+        ]}
       />
+      <Text style={[styles.text, {alignSelf: 'flex-start', marginLeft: 32}]}>
+        Name:
+      </Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={editedDescription}
+        onChangeText={text => setEditedDescription(text)}
+      />
+      <Text style={[styles.text, {alignSelf: 'flex-start', marginLeft: 32}]}>
+        Price:
+      </Text>
       <TextInput
         style={styles.input}
         placeholder="Price"
@@ -102,23 +141,31 @@ const ProductEditScreen = ({route}) => {
         onChangeText={text => setEditedPrice(text)}
         keyboardType="numeric"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Description"
-        value={editedDescription}
-        onChangeText={text => setEditedDescription(text)}
-      />
+
       {Type === 'Container' ? (
-        <TextInput
-          style={styles.input}
-          placeholder="Stock"
-          value={editedStock}
-          onChangeText={text => setEditedStock(text)}
-        />
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <Text
+            style={[styles.text, {alignSelf: 'flex-start', marginLeft: 32}]}>
+            Stock:
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Stock"
+            value={editedStock}
+            onChangeText={text => setEditedStock(text)}
+            keyboardType="numeric"
+          />
+        </View>
       ) : (
         ''
       )}
-      <Button title="Save" onPress={handleSave} disabled={isSaveDisabled} />
+      <View style={{width: '55%', borderRadius: 10, overflow: 'hidden'}}>
+        <Button
+          title="Save Changes"
+          onPress={handleSave}
+          disabled={isSaveDisabled}
+        />
+      </View>
     </View>
   );
 };
@@ -128,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#fff',
   },
   image: {
     width: 100,
@@ -142,6 +189,15 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    color: 'black',
+  },
+  text: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    // color: '#2E8B57',
+    color: '#4682B4',
   },
 });
 

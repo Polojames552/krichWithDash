@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -31,15 +32,17 @@ const productsData = [
 export default function Orders({navigation, route}) {
   const details = route.params?.details || null;
   const userData = details.userData;
+  const [products, setProducts] = useState([]);
+
   const refFlag = route.params?.refreshing;
   const [refreshFlag, setRefreshFlag] = useState(refFlag);
-  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState([]);
   useEffect(() => {
     fetchData();
-  }, [data, navigation, route]);
+  }, [refreshFlag, navigation, route]);
+  // }, [data, navigation, route]);
 
   const handleProductPress = (productId, image, title) => {
     navigation.navigate('ProductDetails', {productId, image, title});
@@ -55,8 +58,10 @@ export default function Orders({navigation, route}) {
     const result = await response.json();
     if (result.success) {
       setData([...result.data]);
-    } else {
-      setData([]);
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
     // else {
     //   console.error('Data fetch failed:', result.message);
@@ -75,7 +80,7 @@ export default function Orders({navigation, route}) {
             'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
             item.Image,
         }}
-        style={styles.productImage}
+        style={[styles.productImage, {resizeMode: 'stretch'}]}
       />
       <View style={styles.productInfo}>
         <Text style={styles.productTitle}>{item.Description}</Text>
@@ -163,7 +168,8 @@ export default function Orders({navigation, route}) {
       })
       .then(response => {
         if (response && response.success) {
-          setData([]);
+          // setData([]);
+          setRefreshFlag(prev => !prev);
           Alert.alert('Attention', response.message);
           console.log('Response: ', response);
         } else {
@@ -202,6 +208,7 @@ export default function Orders({navigation, route}) {
       .then(response => {
         if (response && response.success) {
           setData([]);
+          setRefreshFlag(prev => !prev);
           Alert.alert('Attention', response.message);
           console.log('Response: ', response);
         } else {
@@ -217,6 +224,7 @@ export default function Orders({navigation, route}) {
 
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <FlatList
         data={data}
         renderItem={renderProductItem}

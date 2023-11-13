@@ -13,14 +13,16 @@ import {
 export default function HomeScreen({navigation, route}: any) {
   const details = route.params?.details || null;
   const [data, setData] = useState([]);
+
+  const refFlag = route.params?.refreshing;
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(route.params.refreshing);
   // console.log('H:Route-From: ', route);
   useEffect(() => {
     // console.log('Screen Refreshed');
     // setRefreshing(true);
     fetchData();
-  }, []);
+  }, [refreshFlag, navigation, route]);
   // }, [data, navigation, route]);
   const fetchData = async () => {
     // console.log('Screen Focused');
@@ -33,9 +35,8 @@ export default function HomeScreen({navigation, route}: any) {
       setData(result.data);
       setLoading(true);
       setTimeout(() => {
-        // setData([]);
         setLoading(false);
-      }, 2000);
+      }, 1000);
     }
     //   else {
     //     console.error('Data fetch failed:', result.message);
@@ -72,13 +73,14 @@ export default function HomeScreen({navigation, route}: any) {
 
   return (
     <View style={styles.container}>
-      {/* {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''} */}
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <View style={styles.row}>
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
-          refreshing={refreshing}
+          // refreshing={refreshing}
+          extraData={refreshFlag}
           ListEmptyComponent={() => (
             <Text style={{textAlign: 'center', marginTop: 20}}>
               No data available.
@@ -113,11 +115,11 @@ export default function HomeScreen({navigation, route}: any) {
               <View style={styles.textContainer}>
                 {item.Type === 'Container' ? (
                   <Text style={[styles.price, {color: 'red'}]}>
-                    Stocks: {item.Type}
+                    Type: {item.Type}
                   </Text>
                 ) : (
                   <Text style={[styles.price, {color: 'blue'}]}>
-                    Stocks: {item.Type}
+                    Type: {item.Type}
                   </Text>
                 )}
 

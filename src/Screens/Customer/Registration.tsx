@@ -43,6 +43,9 @@ const RegistrationScreen = ({navigation}) => {
   const [nFile, setNFile] = useState('');
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
+  const [contactError, setContactError] = useState('');
+  const [contactTouched, setContactTouched] = useState(false);
+
   const openGallery = async () => {
     try {
       const images = await launchImageLibrary(options);
@@ -71,7 +74,8 @@ const RegistrationScreen = ({navigation}) => {
     lastname &&
     email &&
     address &&
-    number
+    selectedImage &&
+    contactTouched
   );
   const handleImageUpload = () => {
     ImagePicker.openPicker({
@@ -101,11 +105,21 @@ const RegistrationScreen = ({navigation}) => {
 
   const handleConfirmPasswordChange = text => {
     setConfirmPassword(text);
-
     if (password && text !== password) {
       setPasswordError('Passwords do not match');
     } else {
       setPasswordError('');
+    }
+  };
+
+  const handleContactVerification = text => {
+    setNumber(text);
+    if (!number.startsWith('+639') || number.length !== 12) {
+      setContactError('Invalid Contact Number format');
+      setContactTouched(false);
+    } else {
+      setContactError('');
+      setContactTouched(true);
     }
   };
   const uploadMyImage = async () => {};
@@ -252,10 +266,13 @@ const RegistrationScreen = ({navigation}) => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Contact Number"
-            onChangeText={text => setNumber(text)}
+            placeholder="Contact Number (+639.....)"
+            onChangeText={handleContactVerification}
             value={number}
           />
+          {contactError ? (
+            <Text style={styles.errorText}>{contactError}</Text>
+          ) : null}
           <View style={styles.uploadContainer}>
             <Text style={styles.uploadText}>Upload Any Valid ID</Text>
             {/* <TouchableOpacity
@@ -325,12 +342,12 @@ const RegistrationScreen = ({navigation}) => {
 
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Already Have an Account?</Text>
-            <TouchableOpacity
-              style={[styles.button, {backgroundColor: '#4A78D3'}]}
-              onPress={handleLogin}>
-              <Text style={styles.buttonText}>Log In</Text>
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            style={[styles.button, {backgroundColor: '#4A78D3'}]}
+            onPress={handleLogin}>
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ImageBackground>

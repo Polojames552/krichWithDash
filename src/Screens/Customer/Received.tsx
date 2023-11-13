@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -16,65 +17,24 @@ const productsData = [
     title: 'Received Product 1',
     received: false,
   },
-  {
-    id: 2,
-    image: require('../../Assets/Images/eightliters.jpeg'),
-    title: 'Received Product 2',
-    received: true,
-  },
-  {
-    id: 3,
-    image: require('../../Assets/Images/round.jpg'),
-    title: 'Received Product 1',
-    received: true,
-  },
-  {
-    id: 4,
-    image: require('../../Assets/Images/eightliters.jpeg'),
-    title: 'Received Product 2',
-    received: true,
-  },
-  {
-    id: 5,
-    image: require('../../Assets/Images/round.jpg'),
-    title: 'Received Product 1',
-    received: true,
-  },
-  {
-    id: 6,
-    image: require('../../Assets/Images/eightliters.jpeg'),
-    title: 'Received Product 2',
-    received: true,
-  },
-  {
-    id: 7,
-    image: require('../../Assets/Images/round.jpg'),
-    title: 'Received Product 1',
-    received: true,
-  },
-  {
-    id: 8,
-    image: require('../../Assets/Images/eightliters.jpeg'),
-    title: 'Received Product 2',
-    received: true,
-  },
   // Add more products as needed
 ];
 
 export default function Received({navigation, route}) {
   const details = route.params?.details || null;
   const userData = details.userData;
-  const refFlag = route.params?.refreshing;
   const [data, setData] = useState([]);
-  const [refreshFlag, setRefreshFlag] = useState(refFlag);
   const [products, setProducts] = useState([]);
+
+  const refFlag = route.params?.refreshing;
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // console.log('Screen Refreshed');
     // setRefreshing(true);
     fetchData();
-  }, [data]);
+  }, [refreshFlag, navigation, route]);
 
   const handleProductPress = (productId, image, title) => {
     navigation.navigate('ProductDetails', {productId, image, title});
@@ -90,14 +50,12 @@ export default function Received({navigation, route}) {
       setData([...result.data]);
       setLoading(true);
       setTimeout(() => {
-        // setData([]);
         setLoading(false);
-      }, 2000);
-      setProducts(result.data.map(product => ({...product, selected: false})));
+      }, 1000);
+      // setProducts(result.data.map(product => ({...product})));
       // setRefreshing(false);
       // console.log('Result-latest: ', result.data);
     } else {
-      setData([]);
       // console.error('Data fetch failed:', result.message);
     }
   };
@@ -110,7 +68,7 @@ export default function Received({navigation, route}) {
             'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
             item.Image,
         }}
-        style={styles.productImage}
+        style={[styles.productImage, {resizeMode: 'stretch'}]}
       />
       <View style={styles.productInfo}>
         <Text style={styles.productTitle}>{item.Description}</Text>
@@ -124,6 +82,7 @@ export default function Received({navigation, route}) {
 
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}

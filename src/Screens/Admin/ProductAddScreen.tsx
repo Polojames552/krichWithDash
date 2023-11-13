@@ -164,6 +164,7 @@ export default function AddProductScreen({navigation}) {
   };
   return (
     <View style={styles.container}>
+      <Text style={styles.text}>Add Product</Text>
       <DropDownPicker
         open={open}
         value={typeValue}
@@ -217,7 +218,7 @@ export default function AddProductScreen({navigation}) {
         {selectedImage ? (
           <Image
             source={{uri: selectedImage}}
-            style={{width: 100, height: 100}}
+            style={{width: '50%', height: '100%', resizeMode: 'stretch'}}
           />
         ) : (
           <FontAwesome5 name="image" size={40} color={'black'} />
@@ -254,8 +255,8 @@ const styles = StyleSheet.create({
     height: 150,
   },
   uploadIcon: {
-    width: 100,
-    height: 100,
+    width: '100%',
+    height: '23%',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -263,5 +264,12 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     marginBottom: 10,
+  },
+  text: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'black',
+    paddingBottom: 20,
+    textAlign: 'center',
   },
 });

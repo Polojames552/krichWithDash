@@ -74,7 +74,7 @@ export default function MyCart({navigation, route}) {
       setTimeout(() => {
         // setData([]);
         setLoading(false);
-      }, 2000);
+      }, 1000);
       setProducts(result.data.map(product => ({...product, selected: false})));
       // setRefreshing(false);
       // console.log('Result-latest: ', result.data);
@@ -84,7 +84,7 @@ export default function MyCart({navigation, route}) {
     }
   };
 
-  refreshFlag === true ? console.log('true') : console.log('false');
+  // refreshFlag === true ? console.log('true') : console.log('false');
 
   // console.log('Data-MyCart: ', data);
   const handleProductPress = (
@@ -208,7 +208,7 @@ export default function MyCart({navigation, route}) {
             'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
             item.Image,
         }}
-        style={styles.productImage}
+        style={[styles.productImage, {resizeMode: 'stretch'}]}
       />
       <View style={styles.productInfo}>
         <View>

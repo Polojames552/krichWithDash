@@ -52,7 +52,6 @@ function CustomDrawerContent({navigation}) {
         onPress={() => navigation.navigate('Orders')}
       />
 
-     
       {navigation.isFocused() && (
         <View style={{marginTop: '108%'}}>
           <TouchableOpacity
@@ -98,16 +97,27 @@ export default function AdminOptions({navigation}) {
             <Drawer.Screen
               name="Home"
               component={Dashboard}
-              initialParams={{details}}
+              initialParams={{details, refreshing: true}}
             />
-           
-           <Drawer.Screen name="Products" component={Products} />
-           <Drawer.Screen name="Orders" component={OrderList}/>
+
+            <Drawer.Screen
+              name="Products"
+              initialParams={{refreshing: true}}
+              component={Products}
+            />
+            <Drawer.Screen
+              name="Orders"
+              initialParams={{refreshing: true}}
+              component={OrderList}
+            />
           </Drawer.Navigator>
         )}
       </Stack.Screen>
-      
-            <Stack.Screen name="EditProducts" component={ProductEditScreen} options={{
+
+      <Stack.Screen
+        name="EditProducts"
+        component={ProductEditScreen}
+        options={{
           headerTitle: 'ADMIN',
           headerLeft: () => null,
           headerStyle: {
@@ -117,8 +127,12 @@ export default function AdminOptions({navigation}) {
             color: 'white',
             fontSize: 24,
           },
-        }} />
-            <Stack.Screen name="AddProducts" component={ProductAddScreen}options={{
+        }}
+      />
+      <Stack.Screen
+        name="AddProducts"
+        component={ProductAddScreen}
+        options={{
           headerTitle: 'ADMIN',
           headerLeft: () => null,
           headerStyle: {
@@ -128,9 +142,13 @@ export default function AdminOptions({navigation}) {
             color: 'white',
             fontSize: 24,
           },
-        }}/>
-            
-      <Stack.Screen name="UserDetails" component={UserDetails}options={{
+        }}
+      />
+
+      <Stack.Screen
+        name="UserDetails"
+        component={UserDetails}
+        options={{
           headerTitle: 'ADMIN',
           headerLeft: () => null,
           headerStyle: {
@@ -140,8 +158,8 @@ export default function AdminOptions({navigation}) {
             color: 'white',
             fontSize: 24,
           },
-        }}/>
-        
+        }}
+      />
     </Stack.Navigator>
   );
 }

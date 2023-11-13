@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
@@ -101,11 +102,15 @@ const OrderItem = ({
 };
 
 const NewOrdersScreen = (navigation, route) => {
+  const refFlag = route.params?.refreshing;
+  const [loading, setLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
+
   const [data, setData] = useState([]);
+
   useEffect(() => {
     fetchData();
-  }, [data, navigation, route]);
-  // }, [data]);
+  }, [refreshFlag, navigation, route]);
 
   const fetchData = async () => {
     // console.log('Screen Focused');
@@ -116,6 +121,11 @@ const NewOrdersScreen = (navigation, route) => {
     const result = await response.json();
     if (result.success) {
       setData([...result.data]);
+      setLoading(true);
+      setTimeout(() => {
+        // setData([]);
+        setLoading(false);
+      }, 1000);
     }
     //   else {
     //     console.error('Data fetch failed:', result.message);
@@ -154,6 +164,7 @@ const NewOrdersScreen = (navigation, route) => {
       .then(response => {
         if (response && response.success) {
           setData([]);
+          setRefreshFlag(prev => !prev);
           Alert.alert('Attention', response.message);
           console.log('Response: ', response);
         } else {
@@ -173,6 +184,7 @@ const NewOrdersScreen = (navigation, route) => {
 
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <FlatList
         data={data}
         keyExtractor={item => item.id.toString()}
@@ -190,58 +202,21 @@ const NewOrdersScreen = (navigation, route) => {
           </Text>
         )}
         showsVerticalScrollIndicator={false}
+        extraData={refreshFlag}
       />
     </View>
   );
 };
 
-const CompletedOrdersScreen = () => {
-  const [dataComplete, setDataComplete] = useState([]);
-  useEffect(() => {
-    fetchData();
-  }, [dataComplete]);
-  // }, [dataComplete]);
+const ToDeliverScreen = (navigation, route) => {
+  const refFlag = route.params?.refreshing;
+  const [loading, setLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
 
-  const fetchData = async () => {
-    // console.log('Screen Focused');
-    // try {
-    const response = await fetch(
-      'https://krichsecret.000webhostapp.com/Products/Display/Admin/DisplayAdminComplete.php',
-    );
-    const result = await response.json();
-    if (result.success) {
-      setDataComplete(result.data);
-    }
-    //   else {
-    //     console.error('Data fetch failed:', result.message);
-    //   }
-    // } catch (error) {
-    //   console.error('Error fetching data:', error.message);
-    // }
-  };
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={dataComplete}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => <OrderItem order={item} showButtons={false} />}
-        ListEmptyComponent={() => (
-          <Text style={{textAlign: 'center', marginTop: 20}}>
-            No data available.
-          </Text>
-        )}
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
-  );
-};
-
-const ToDeliverScreen = () => {
   const [dataDeliver, setDataDeliver] = useState([]);
   useEffect(() => {
     fetchData();
-  }, [dataDeliver]);
+  }, [refreshFlag, navigation, route]);
   // }, [dataDeliver]);
 
   const fetchData = async () => {
@@ -252,7 +227,12 @@ const ToDeliverScreen = () => {
     );
     const result = await response.json();
     if (result.success) {
-      setDataDeliver(result.data);
+      setDataDeliver([...result.data]);
+      setLoading(true);
+      setTimeout(() => {
+        // setData([]);
+        setLoading(false);
+      }, 1000);
     }
     //   else {
     //     console.error('Data fetch failed:', result.message);
@@ -264,6 +244,7 @@ const ToDeliverScreen = () => {
 
   return (
     <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <FlatList
         data={dataDeliver}
         keyExtractor={item => item.id.toString()}
@@ -276,6 +257,59 @@ const ToDeliverScreen = () => {
           </Text>
         )}
         showsVerticalScrollIndicator={false}
+        extraData={refreshFlag}
+      />
+    </View>
+  );
+};
+
+const CompletedOrdersScreen = (navigation, route) => {
+  const refFlag = route.params?.refreshing;
+  const [loading, setLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
+  const [dataComplete, setDataComplete] = useState([]);
+  useEffect(() => {
+    fetchData();
+  }, [refreshFlag, navigation, route]);
+  // }, [dataComplete]);
+
+  const fetchData = async () => {
+    // console.log('Screen Focused');
+    // try {
+    const response = await fetch(
+      'https://krichsecret.000webhostapp.com/Products/Display/Admin/DisplayAdminComplete.php',
+    );
+    const result = await response.json();
+    if (result.success) {
+      setDataComplete([...result.data]);
+      setLoading(true);
+      setTimeout(() => {
+        // setData([]);
+        setLoading(false);
+      }, 1000);
+    }
+    //   else {
+    //     console.error('Data fetch failed:', result.message);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching data:', error.message);
+    // }
+  };
+
+  return (
+    <View style={styles.container}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
+      <FlatList
+        data={dataComplete}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item}) => <OrderItem order={item} showButtons={false} />}
+        ListEmptyComponent={() => (
+          <Text style={{textAlign: 'center', marginTop: 20}}>
+            No data available.
+          </Text>
+        )}
+        showsVerticalScrollIndicator={false}
+        extraData={refreshFlag}
       />
     </View>
   );
@@ -305,9 +339,21 @@ const OrderList = (route, navigation) => {
         activeTintColor: '#70A5CD',
         inactiveTintColor: 'gray',
       }}>
-      <Tab.Screen name="New Orders" component={NewOrdersScreen} />
-      <Tab.Screen name="To Deliver" component={ToDeliverScreen} />
-      <Tab.Screen name="Completed Orders" component={CompletedOrdersScreen} />
+      <Tab.Screen
+        name="New Orders"
+        component={NewOrdersScreen}
+        initialParams={{refreshing: true}}
+      />
+      <Tab.Screen
+        name="To Deliver"
+        component={ToDeliverScreen}
+        initialParams={{refreshing: true}}
+      />
+      <Tab.Screen
+        name="Completed Orders"
+        component={CompletedOrdersScreen}
+        initialParams={{refreshing: true}}
+      />
     </Tab.Navigator>
   );
 };

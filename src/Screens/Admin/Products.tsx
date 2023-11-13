@@ -7,15 +7,22 @@ import {
   Image,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Products = ({navigation, route}) => {
   const [data, setData] = useState([]);
+
+  const refFlag = route.params?.refreshing;
+  const [loading, setLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
+
   useEffect(() => {
     // console.log('Screen Refreshed');
     fetchData();
-  }, [data, navigation, route]);
+  }, [refreshFlag, navigation, route]);
+
   const fetchData = async () => {
     // console.log('Screen Focused');
     // try {
@@ -25,6 +32,11 @@ const Products = ({navigation, route}) => {
     const result = await response.json();
     if (result.success) {
       setData([...result.data]);
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+      // setData(result.data.map(item => ({...item})));
     }
     //   else {
     //     console.error('Data fetch failed:', result.message);
@@ -49,7 +61,7 @@ const Products = ({navigation, route}) => {
   const handleAddProductPress = () => {
     navigation.navigate('AddProducts');
   };
-  const handleDeleteItem = async (id, product_id) => {
+  const handleDeleteItem = async id => {
     const InsertAPIURL =
       'https://krichwater2023.000webhostapp.com/Products/Delete/DeleteProduct.php';
     const header = {
@@ -58,7 +70,6 @@ const Products = ({navigation, route}) => {
     };
     const Data = {
       Item_id: id,
-      Item_prod_id: product_id,
     };
     try {
       const response = await fetch(InsertAPIURL, {
@@ -73,7 +84,7 @@ const Products = ({navigation, route}) => {
 
       if (responseData.success) {
         // Update the products state to remove selected items
-        setData([]);
+        setRefreshFlag(prev => !prev);
         Alert.alert('Attention', responseData.message);
         console.log('Response Data:', responseData);
       } else {
@@ -106,7 +117,7 @@ const Products = ({navigation, route}) => {
               'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
               item.Image,
           }}
-          style={styles.productImage}
+          style={[styles.productImage, {resizeMode: 'stretch'}]}
         />
         <View style={styles.productDetails}>
           <Text style={styles.productDescription}>{item.Name}</Text>
@@ -120,7 +131,7 @@ const Products = ({navigation, route}) => {
                 [
                   {
                     text: 'Delete',
-                    onPress: () => handleDeleteItem(item.id, item.Product_id),
+                    onPress: () => handleDeleteItem(item.id),
                   },
                   {
                     text: 'Cancel',
@@ -149,11 +160,13 @@ const Products = ({navigation, route}) => {
       <View style={styles.containerHeading}>
         <Text style={styles.heading}>List of Products</Text>
       </View>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <FlatList
         data={data}
         renderItem={renderProductItem}
         keyExtractor={item => item.id.toString()}
         style={styles.productList}
+        extraData={refreshFlag}
       />
       {/* <View style={styles.containerHeading}>
         <Text style={styles.heading}>Containers</Text>
@@ -242,8 +255,8 @@ const styles = StyleSheet.create({
   productImage: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    marginRight: 8,
+    borderRadius: 8,
+    margin: 10,
   },
   productDetails: {
     flex: 1,

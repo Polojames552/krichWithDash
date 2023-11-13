@@ -20,7 +20,7 @@ if ($conn->connect_error || $conn1->connect_error) {
 $data = json_decode(file_get_contents("php://input"));
 
 $id = $data->Item_id;
-$prod_id = $data->Item_prod_id;
+
 $sstatus = 'Done';
 // Delete from waters_tbl
 $findWaters = "DELETE FROM waters_tbl WHERE id=?";
@@ -29,7 +29,7 @@ $stmtWaters->bind_param("i", $id);
 
 $findCart = "DELETE FROM cart_tbl WHERE Product_id=? AND Status != ?";
 $stmtCart = $conn->prepare($findCart);
-$stmtCart->bind_param("is", $prod_id, $sstatus);
+$stmtCart->bind_param("is", $id, $sstatus);
 
 if ($stmtCart->execute() && $stmtWaters->execute()) {
     $response = array('success' => true, 'message' => 'Deleted product successfully!');

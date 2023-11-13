@@ -6,16 +6,21 @@ import {
   FlatList,
   Image,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
-const Dashboard = ({navigation}) => {
+const Dashboard = ({navigation, route}) => {
   const [data, setData] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [action, setAction] = useState('');
+  const refFlag = route.params?.refreshing;
+  const [refreshFlag, setRefreshFlag] = useState(refFlag);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     // console.log('Screen Refreshed');
     fetchData();
-  }, [data]);
+  }, [refreshFlag, navigation, route]);
   const handleUserPress = (
     id,
     Username,
@@ -105,6 +110,7 @@ const Dashboard = ({navigation}) => {
       })
       .then(response => {
         if (response && response.success) {
+          setRefreshFlag(prev => !prev);
           Alert.alert('Attention', response.message);
           console.log('Response: ', response);
         } else {
@@ -180,10 +186,6 @@ const Dashboard = ({navigation}) => {
     </TouchableOpacity>
   );
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     // try {
     const response = await fetch(
@@ -193,6 +195,11 @@ const Dashboard = ({navigation}) => {
     // console.log(result.message);
     if (result.success) {
       setData(result.data);
+      setLoading(true);
+      setTimeout(() => {
+        // setData([]);
+        setLoading(false);
+      }, 1000);
     }
     //   else {
     //     console.error('Data fetch failed:', result.message);
@@ -204,6 +211,7 @@ const Dashboard = ({navigation}) => {
 
   return (
     <View style={{padding: 20}}>
+      {loading ? <ActivityIndicator style={{marginTop: 20}} /> : ''}
       <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>
         New Users For Verification
       </Text>
@@ -216,6 +224,7 @@ const Dashboard = ({navigation}) => {
             No data available.
           </Text>
         )}
+        extraData={refreshFlag}
       />
     </View>
   );
