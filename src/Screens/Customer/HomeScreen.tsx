@@ -8,6 +8,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 
 export default function HomeScreen({navigation, route}: any) {
@@ -94,16 +95,18 @@ export default function HomeScreen({navigation, route}: any) {
                 //   ? styles.imageContainer
                 //   : styles.imageContainer1
               }
-              onPress={() =>
-                handleImagePress(
-                  item.Price,
-                  item.Image,
-                  item.Name,
-                  item.id,
-                  item.Stock,
-                  item.Type,
-                )
-              }>
+              onPress={() => {
+                item.Stock == 0
+                  ? Alert.alert('Attention', 'Product out of Stock')
+                  : handleImagePress(
+                      item.Price,
+                      item.Image,
+                      item.Name,
+                      item.id,
+                      item.Stock,
+                      item.Type,
+                    );
+              }}>
               <Image
                 source={{
                   uri:
