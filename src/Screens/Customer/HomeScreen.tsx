@@ -113,7 +113,7 @@ export default function HomeScreen({navigation, route}: any) {
                     'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
                     item.Image,
                 }}
-                style={styles.image}
+                style={[styles.image, {resizeMode: 'stretch'}]}
               />
               <View style={styles.textContainer}>
                 {item.Type === 'Container' ? (

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "720743183598",
+    "project_id": "phone-authentication-c061c",
+    "storage_bucket": "phone-authentication-c061c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720743183598:android:49fbf0bc19653317842fff",
+        "android_client_info": {
+          "package_name": "com.krich_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqDgNOg5eQTqln3W9BqE92TMMkiIif1PA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,9 +5,11 @@ import {NavigationContainer} from '@react-navigation/native';
 import Options from './src/Navigation/Options';
 import UploadImage from './src/Screens/Customer/UploadImage';
 
+import OtpScreen from './src/otpScreen';
 export default class App extends Component {
   render() {
     return (
+      // <OtpScreen />
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>

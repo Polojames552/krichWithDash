@@ -240,7 +240,7 @@ export default function ProductDetails({navigation, route}: any) {
                     'https://krichwater2023.000webhostapp.com/Products/Add&Edit/Image/' +
                     image,
                 }}
-                style={styles.image}
+                style={[styles.image, {resizeMode: 'stretch'}]}
               />
             </View>
             <Text style={styles.description}>{description}</Text>
