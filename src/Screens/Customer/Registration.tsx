@@ -98,8 +98,8 @@ const RegistrationScreen = ({navigation}) => {
     email &&
     address &&
     selectedImage &&
-    contactTouched &&
-    confirmPasswordTouched
+    confirmPasswordTouched &&
+    contactTouched
   );
   const handleImageUpload = () => {
     ImagePicker.openPicker({
@@ -208,12 +208,13 @@ const RegistrationScreen = ({navigation}) => {
       } catch (error) {
         // If an error occurs (e.g., invalid code), handle it here
         // console.error('Error confirming OTP', error);
-        Alert.alert(
-          'Attention!',
-          'Invalid Code! You have (' +
-            i +
-            ') attempts left to enter the valid OTP code',
-        );
+        // Alert.alert(
+        //   'Attention!',
+        //   'Invalid Code! You have (' +
+        //     i +
+        //     ') attempts left to enter the valid OTP code',
+        // );
+        Alert.alert('Attention!', 'Invalid Code!');
         const r = i - 1;
         setCode('');
         seti(r);
@@ -342,6 +343,14 @@ const RegistrationScreen = ({navigation}) => {
       {cardView == false ? (
         <View style={[styles.container, {marginTop: -100}]}>
           <View style={styles.loginContainer}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                paddingBottom: 10,
+                alignSelf: 'flex-start',
+              }}>
+              Attempts: <Text style={{fontSize: 15}}>{i}</Text>
+            </Text>
             <TextInput
               style={styles.input}
               placeholder="OTP code"

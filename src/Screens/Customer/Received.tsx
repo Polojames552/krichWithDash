@@ -75,8 +75,15 @@ export default function Received({navigation, route}) {
         <Text style={[styles.productTitle, {fontSize: 11}]}>
           {item.time_updated}
         </Text>
-        {item.Status && <Icon name="check" size={20} color="green" />}
       </View>
+      {item.Status && (
+        <Icon
+          style={[{marginRight: 10}]}
+          name="check"
+          size={20}
+          color="green"
+        />
+      )}
     </View>
   );
 
@@ -122,13 +129,14 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column', // Change to 'column'
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start', // Align items to the start (left side)
   },
   productTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     paddingHorizontal: 10,
+    marginBottom: 5, // Add margin at the bottom for spacing
   },
 });

@@ -55,7 +55,7 @@ function CustomDrawerContent({navigation}) {
       />
 
       {navigation.isFocused() && (
-        <View style={{marginTop: '108%'}}>
+        <View style={{marginTop: '146%'}}>
           <TouchableOpacity
             style={{
               backgroundColor: '#FF6347',
@@ -64,7 +64,11 @@ function CustomDrawerContent({navigation}) {
               marginTop: 10,
             }}
             onPress={handleLogout}>
-            <Text style={{color: 'white', fontSize: 18}}>Logout</Text>
+            <Text style={{color: 'white', fontSize: 18}}>
+              {' '}
+              <FontAwesome5 name="sign-out-alt" size={24} color={'white'} />
+              Logout
+            </Text>
           </TouchableOpacity>
         </View>
       )}

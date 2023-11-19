@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Button, TextInput, Alert, ActivityIndicator} from 'react-native';
+import {Button, TextInput, Alert, ActivityIndicator, Text} from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 const OtpScreen = () => {
@@ -100,6 +100,7 @@ const OtpScreen = () => {
 
   return (
     <>
+      <Text>Attempts:</Text>
       <TextInput
         value={code}
         onChangeText={text => textCode(text)}

@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const Dashboard = ({navigation, route}) => {
+const UserDashboard = ({navigation, route}) => {
   const [data, setData] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [action, setAction] = useState('');
@@ -185,29 +185,29 @@ const Dashboard = ({navigation, route}) => {
       </View>
     </TouchableOpacity>
   );
-
-  const fetchData = async () => {
-    // try {
-    const response = await fetch(
-      'https://krichwater2023.000webhostapp.com/Authentication/DisplayUsers.php',
-    );
-    const result = await response.json();
-    // console.log(result.message);
-    if (result.success) {
-      setData(result.data);
-      setLoading(true);
-      setTimeout(() => {
-        // setData([]);
-        setLoading(false);
-      }, 1000);
-    }
-    //   else {
-    //     console.error('Data fetch failed:', result.message);
-    //   }
-    // } catch (error) {
-    //   console.error('Error fetching data:', error.message);
-    // }
-  };
+  const fetchData = async () => {};
+  // const fetchData = async () => {
+  //   // try {
+  //   const response = await fetch(
+  //     'https://krichwater2023.000webhostapp.com/Authentication/DisplayUsers.php',
+  //   );
+  //   const result = await response.json();
+  //   // console.log(result.message);
+  //   if (result.success) {
+  //     setData(result.data);
+  //     setLoading(true);
+  //     setTimeout(() => {
+  //       // setData([]);
+  //       setLoading(false);
+  //     }, 1000);
+  //   }
+  //   //   else {
+  //   //     console.error('Data fetch failed:', result.message);
+  //   //   }
+  //   // } catch (error) {
+  //   //   console.error('Error fetching data:', error.message);
+  //   // }
+  // };
 
   return (
     <View style={{padding: 20}}>
@@ -230,4 +230,4 @@ const Dashboard = ({navigation, route}) => {
   );
 };
 
-export default Dashboard;
+export default UserDashboard;

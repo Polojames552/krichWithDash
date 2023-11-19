@@ -18,7 +18,8 @@ $data = json_decode(file_get_contents("php://input"));
 date_default_timezone_set('Asia/Manila');
 $formattedTime = new DateTime();
 $formattedTime->setTimezone(new DateTimeZone('Asia/Manila')); // Adjust to Philippine time
-$currentTime = $formattedTime->format('Y-m-d H:i:s');
+//$currentTime = $formattedTime->format(" F j, Y h:i:s A");
+$currentTime = $formattedTime->format('F j, Y');
 
 // Assign values to variables
 $User_id = $data->User_id;
